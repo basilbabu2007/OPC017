@@ -1,0 +1,5 @@
+# SYNTHETIC DEMO endpoint log (UTC). Fictional host WS-SYNTH-07.
+2026-10-05T10:13:20Z TASK_CREATED host=WS-SYNTH-07 task=UpdaterSVC path=C:\Users\synth\Downloads\FreePDFConverter-Setup-SYNTH.exe trigger=logon
+2026-10-05T10:14:02Z NETWORK host=WS-SYNTH-07 dst=203.0.113.99:443 proto=tcp bytes_out=1422 note=SYNTHETIC fake beacon
+2026-10-05T10:19:02Z NETWORK host=WS-SYNTH-07 dst=203.0.113.99:443 proto=tcp bytes_out=1398 note=SYNTHETIC fake beacon
+2026-10-05T09:45:00Z LOGON host=WS-SYNTH-07 user=ws-user.synth ip=198.51.100.71

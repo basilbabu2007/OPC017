@@ -1,0 +1,4 @@
+SYNTHETIC DEMO incident note (fictional user report).
+"Hi IT (synthetic), my PC has been slow since I installed a free PDF
+converter yesterday morning. Can you check? - ws-user.synth"
+Reported: 2026-10-05T15:40:00Z

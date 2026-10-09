@@ -1,0 +1,8 @@
+SYNTHETIC DEMO ransom note (fictional, harmless text).
+
+YOUR FILES HAVE BEEN "ENCRYPTED" (this is a drill - nothing is encrypted).
+
+To "recover" your drill files contact test-contact@example.invalid.
+Reference: SYNTH-DRILL-004. Do NOT send anything anywhere.
+
+This file exists only so detection rules have a keyword fixture.

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPC017 — Forensic Investigation Workbench</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2l10 4v8c0 6.5-4.2 11-10 16C10.2 25 6 20.5 6 14V6z' fill='%237c3aed'/%3E%3Cpath d='M11 16l4 4 7-8' stroke='%23ffffff' stroke-width='2.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="app">
+  <aside class="rail" aria-label="Workbench">
+    <div class="mark" title="OPC017 Digital Forensics"><svg viewBox="0 0 32 32" width="28" height="28"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a855f7"/><stop offset="1" stop-color="#6d28d9"/></linearGradient></defs><path d="M16 2l10 4v8c0 6.5-4.2 11-10 16C10.2 25 6 20.5 6 14V6z" fill="url(#lg)"/><path d="M11 16l4 4 7-8" stroke="#ffffff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <nav aria-label="Workspace">
+      <button data-tab="dash" class="active" title="Dashboard (Alt+1)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg><small>Board</small></button>
+      <button data-tab="corr" title="Smart Correlation (Alt+2)"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.6"/><circle cx="18" cy="6" r="2.6"/><circle cx="12" cy="18" r="2.6"/><path d="M8 7.5l3 8M16 7.5l-3 8M8.5 6h7"/></svg><small>Links</small></button>
+      <button data-tab="time" title="Timeline (Alt+3)"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2.4"/></svg><small>Time</small></button>
+      <button data-tab="ai" title="AI Assistant (Alt+4)"><svg viewBox="0 0 24 24"><path d="M12 3l2.2 5.4L20 9.3l-4.2 3.9 1.2 5.8-5-2.9-5 2.9 1.2-5.8L4 9.3l5.8-.9z"/></svg><small>AI</small></button>
+      <button data-tab="vault" title="Evidence Vault (Alt+5)"><svg viewBox="0 0 24 24"><rect x="4" y="9" width="16" height="11" rx="2"/><path d="M8 9V7a4 4 0 018 0v2"/><circle cx="12" cy="14.5" r="1.8"/></svg><small>Vault</small></button>
+    </nav>
+    <div class="live" title="local prototype · synthetic data"><i></i></div>
+  </aside>
+  <div class="body">
+    <header class="masthead">
+      <div class="wordmark">OPC017<small>FORENSICS</small></div>
+      <div class="casebox"><label for="caseSel">Active case</label><select id="caseSel"></select></div>
+      <div class="mcase"><p class="crumb">Investigation workspace</p><h1 id="caseTitle">—</h1></div>
+      <div class="top-right"><span id="aiBadge" class="badge">AI: template-deterministic</span><span class="badge utc">UTC</span></div>
+    </header>
+    <main>
+      <section id="tab-dash" class="tab active" aria-label="Dashboard">
+        <div class="hero">
+          <div><h2>Case overview</h2><p>Live counts from the database — never hardcoded. Select a finding to get an evidence-grounded explanation.</p></div>
+          <div class="hero-badges"><span class="hbadge">SHA-256 tracked</span><span class="hbadge">UTC timeline</span><span class="hbadge">Case-isolated AI</span></div>
+        </div>
+        <div class="cards" id="statCards"></div>
+        <div class="dash-grid">
+          <div class="panel"><h2>High-priority findings</h2><div id="hiFind"></div></div>
+          <div class="panel"><h2>Findings by severity</h2><div id="sevBar"></div><div class="legend" id="sevLegend"></div></div>
+        </div>
+        <div class="dash-grid">
+          <div class="panel"><h2>Relationship graph preview</h2><p class="sub">Click a node to inspect its supporting evidence.</p><div id="graphPreview"></div></div>
+          <div class="panel"><h2>Latest timeline events</h2><div id="recentAct"></div></div>
+        </div>
+        <div class="panel"><h2>How to work this case</h2>
+          <ol class="steps">
+            <li><b>Correlate</b> — open Links, click a URL edge to see both sources.</li>
+            <li><b>Reconstruct</b> — use Time, click an event for its origin file and parser.</li>
+            <li><b>Explain</b> — ask the AI why a finding was flagged.</li>
+            <li><b>Preserve</b> — re-verify hashes in the Vault before reporting.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="tab-corr" class="tab" aria-label="Smart correlation">
+        <div class="panel">
+          <h2>Smart evidence correlation</h2>
+          <p class="sub">Regex parsers extract URLs, domains, IPs, emails, hashes and timestamps from working copies. Relationships are shown only when supported by implemented rules.</p>
+          <div class="toolbar">
+            <input id="corrSearch" placeholder="Filter artifacts: url, ip, email…" aria-label="Filter artifacts">
+            <select id="corrType" aria-label="Artifact type"><option value="">all types</option><option>url</option><option>domain</option><option>ip</option><option>email</option><option>filename</option><option>filepath</option><option>hash</option></select>
+          </div>
+        </div>
+        <div class="cols">
+          <div class="panel"><h2>Artifacts</h2><div class="table-wrap"><table id="artTable"><thead><tr><th>Type</th><th>Value</th><th>Source</th></tr></thead><tbody></tbody></table></div></div>
+          <div class="panel"><h2>Relationships · why linked</h2><div id="corrList"></div></div>
+        </div>
+        <div id="nodeDetail" class="detail">Click an artifact or relationship to inspect supporting evidence.</div>
+      </section>
+
+      <section id="tab-time" class="tab" aria-label="Timeline">
+        <div class="panel">
+          <h2>Interactive investigation timeline</h2>
+          <p class="sub">Chronological, UTC-stored. Click any event to trace it back to its evidence file, source line, parser and linked findings.</p>
+          <div class="toolbar">
+            <input id="timeSearch" placeholder="Search url / ip / user / filename…" aria-label="Search timeline">
+            <select id="sevFilter" aria-label="Severity filter"><option value="">all severity</option><option>Critical</option><option>High</option><option>Medium</option><option>Low</option><option>Informational</option></select>
+          </div>
+        </div>
+        <div id="timeline" class="timeline"></div>
+        <div id="eventDetail" class="detail">Click a timeline event for origin: evidence file → line/row → parser → linked findings.</div>
+      </section>
+
+      <section id="tab-ai" class="tab" aria-label="AI assistant">
+        <div class="panel chat">
+          <h2>AI investigation assistant</h2>
+          <p class="sub">Answers are grounded in this case's stored records and cite evidence IDs. The model never invents timestamps or relationships.</p>
+          <div class="toolbar">
+            <select id="aiFinding" aria-label="Finding to explain"></select>
+            <button id="aiExplainBtn">Explain why flagged</button>
+          </div>
+          <div class="qrow"><input id="aiQ" placeholder="Ask: e.g. Which suspicious URLs were found? What supports a phishing hypothesis?"><button id="aiAskBtn">Ask</button></div>
+          <div id="aiOut" class="detail answer">Evidence-grounded answers only. Cites evidence IDs. Never invents timestamps.</div>
+        </div>
+      </section>
+
+      <section id="tab-vault" class="tab" aria-label="Evidence vault">
+        <div class="panel">
+          <h2>Tamper-evident vault</h2>
+          <p class="sub">Originals preserved · SHA-256 recorded at ingest · every handling action audit-logged · re-verify on demand. A mismatch raises a visible warning.</p>
+        </div>
+        <div id="vaultList"></div>
+        <div id="vaultDetail" class="detail">Select evidence to see: unique ID · SHA-256 · upload time · uploader · case · custody chain · re-verify.</div>
+      </section>
+      <footer class="pagefoot">OPC017 prototype · authorized investigations only · AI output is assistive, not conclusive.</footer>
+    </main>
+    <footer class="statusbar" aria-label="Status">
+      <span class="st"><i class="sq ok-sq"></i>DB LIVE</span>
+      <span class="st">cases <b id="stCase">—</b></span>
+      <span class="st">artifacts <b id="stArts">—</b></span>
+      <span class="st">findings <b id="stFind">—</b></span>
+      <span class="st">links <b id="stCorr">—</b></span>
+      <span class="st">events <b id="stTime">—</b></span>
+      <span class="sp"></span>
+      <span class="st dim">SYNTHETIC DEMO · Alt+1…5 switches views</span>
+      <span class="st mono" id="clock">--:--:--</span>
+    </footer>
+  </div>
+</div>
+<div id="toasts" aria-live="polite"></div>
+<script>
+(function(){function t(){var d=new Date();var p=function(n){return String(n).padStart(2,'0')};var el=document.getElementById('clock');if(el)el.textContent=p(d.getUTCHours())+':'+p(d.getUTCMinutes())+':'+p(d.getUTCSeconds())+' UTC';}t();setInterval(t,1000);})();
+</script>
+<script src="app.js"></script>
+</body>
+</html>

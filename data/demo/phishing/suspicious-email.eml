@@ -1,0 +1,20 @@
+From: "SecureBank Alert" <alerts@securebank-notify.example-info>
+To: victim.synth@example.com
+Subject: [SYNTHETIC DEMO] Urgent: verify your online banking access
+Date: Tue, 07 Oct 2026 09:14:00 +0000
+Message-ID: <synth-demo-001@example-info>
+X-Demo: SYNTHETIC DATA - NOT A REAL PHISHING EMAIL
+
+Hello,
+
+This is SYNTHETIC demonstration data for the OPC017 hackathon.
+We detected an unusual sign-in. Please verify immediately at:
+
+http://secure-bank-verify-support.example-info/login?session=synth-demo-abc123
+
+If this was you, ignore this message. Do not enter real credentials anywhere.
+
+Source IP seen by (synthetic) mail relay: 203.0.113.45
+Account: j.doe.synth
+
+-- Synthetic demo footer --

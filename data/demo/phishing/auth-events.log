@@ -1,0 +1,8 @@
+# SYNTHETIC DEMO authentication log (UTC, ISO8601). All users/IPs fictional.
+2026-10-07T09:16:02Z LOGIN_FAIL user=j.doe.synth ip=203.0.113.45 reason=bad-password
+2026-10-07T09:16:31Z LOGIN_FAIL user=j.doe.synth ip=203.0.113.45 reason=bad-password
+2026-10-07T09:17:05Z LOGIN_FAIL user=j.doe.synth ip=203.0.113.45 reason=bad-password
+2026-10-07T09:18:12Z LOGIN_FAIL user=j.doe.synth ip=203.0.113.45 reason=bad-password
+2026-10-07T09:18:55Z LOGIN_FAIL user=j.doe.synth ip=203.0.113.45 reason=bad-password
+2026-10-07T09:21:10Z LOGIN_SUCCESS user=j.doe.synth ip=203.0.113.45 method=password
+2026-10-07T08:40:00Z LOGIN_SUCCESS user=a.smith.synth ip=198.51.100.23 method=password

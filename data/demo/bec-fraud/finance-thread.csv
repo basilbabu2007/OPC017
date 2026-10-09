@@ -1,0 +1,4 @@
+msg_id,from,to,subject,event_time_utc,note
+m1,accounts@brightline-suppliers.example,accounts-payable.synth@example.com,Updated bank details,2026-10-06T14:02:00Z,SYNTHETIC inbound supplier mail
+m2,accounts-payable.synth@example.com,cfo.synth@example.com,Fwd: Updated bank details,2026-10-06T14:20:00Z,SYNTHETIC internal forward
+m3,erp.synth@example.com,accounts-payable.synth@example.com,Payee change staged: BRIGHTLINE TEST ACCOUNT,2026-10-06T14:41:00Z,SYNTHETIC ERP payee-change event

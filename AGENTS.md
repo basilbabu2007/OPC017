@@ -10,24 +10,35 @@ The platform receives evidence from external tools and other team projects. It d
 
 ## 2. Current Technology Stack
 
-* **Language:** Python
-* **Backend:** FastAPI
-* **Database:** SQLite
-* **Testing:** pytest
-* **API documentation:** FastAPI Swagger UI
+* **Service (Python):** FastAPI (`app/`), SQLite (`app/evidence.db`), pytest (`tests/`), Swagger UI.
+* **Workspace (Node):** Express + built-in `node:sqlite` (`backend/`), served investigation UI (`backend/public/`).
+  Justification: this machine has Node 24 and no Python runtime, so the interactive
+  workspace was built on Node without replacing any Python code. Both stacks are
+  read-only toward each other's data stores — they do not share a database.
+* **API documentation:** FastAPI Swagger UI (Python); REST + static UI (Node).
 
-Keep the current stack unless a change is necessary and explicitly justified.
+Keep the current stacks unless a change is necessary and explicitly justified.
 
 ## 3. Current Project Structure
 
-* `main.py` — FastAPI application and API endpoints.
-* `storage.py` — SQLite database operations and evidence metadata.
-* `extractor.py` — Extracts timestamps, IP addresses, URLs, and usernames from supported evidence files.
-* `correlator.py` — Identifies temporal relationships between artifacts from different evidence sources.
-* `test_correlator.py` — Tests the correlation engine.
-* `test-data/` — Sample evidence for development and testing.
-* `evidence/` — Local evidence storage; do not commit original evidence.
+* `app/` — FastAPI service: `main.py` (API endpoints), `storage.py` (SQLite metadata),
+  `extractor.py` (timestamps, IPs, URLs, usernames), `correlator.py` (temporal relationships),
+  `detector.py` (SQL-injection pattern rules).
+* `tests/` — pytest suite (`test_correlator.py`, `test_detector.py`); run from repo root
+  with `python -m pytest -v` so `from app...` imports resolve.
+* `test-data/` — Sample evidence for development and testing (`auth.log`,
+  `browser_history.csv`, `large.csv`, `sample.exe` — a 16-byte *text* fixture
+  spelling "synthetic test", used for extension-validation tests; harmless).
+* `evidence/` — Python service storage (`evidence/originals/` + `app/evidence.db`);
+  local only, never commit original evidence.
+* `backend/` — Node workspace: Express API + SQLite (`backend/data/`), evidence vault
+  (`backend/storage/evidence/`), UI (`backend/public/`), synthetic multi-case fixtures
+  and seeder (`data/demo/`, `backend/src/seed.js`, `backend/tests/verify.js`).
+* `data/demo/` — Inert synthetic scenarios (phishing, BEC fraud, trojan, ransomware);
+  see `data/demo/SAFETY.txt`.
+* `docs/RUN.md` — Setup and run commands for both stacks.
 * `requirements.txt` — Python dependencies.
+* `start.bat` — One-click launcher for the Node workspace on Windows.
 
 ## 4. Development Principles
 

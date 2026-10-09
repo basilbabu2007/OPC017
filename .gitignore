@@ -8,3 +8,13 @@ evidence.db
 *.db-journal
 *.db-wal
 *.db-shm
+# Node investigation workspace (backend/)
+backend/node_modules/
+backend/data/*.db
+backend/data/*.db-journal
+backend/data/*.db-wal
+backend/data/*.db-shm
+backend/storage/evidence/
+backend/.env
+backend/server.log
+backend/server.err

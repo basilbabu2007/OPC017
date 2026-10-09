@@ -1,0 +1,3 @@
+# SYNTHETIC DEMO auth log. Benign baseline: finance users, office IPs.
+2026-10-06T13:58:10Z LOGIN_SUCCESS user=accounts-payable.synth ip=198.51.100.44 method=password+mfa
+2026-10-06T14:22:31Z LOGIN_SUCCESS user=cfo.synth ip=198.51.100.44 method=sso

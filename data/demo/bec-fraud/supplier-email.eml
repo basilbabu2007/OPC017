@@ -1,0 +1,22 @@
+From: "Brightline Suppliers Ltd" <accounts@brightline-suppliers.example>
+Reply-To: billing@brightline-suppliers-billing.example-info
+To: accounts-payable.synth@example.com
+Subject: [SYNTHETIC DEMO] Updated bank details for invoice INV-SYNTH-2041
+Date: Mon, 06 Oct 2026 14:02:00 +0000
+Message-ID: <synth-bec-002@example-info>
+X-Demo: SYNTHETIC DATA - NO REAL SUPPLIER, NO REAL MONEY
+
+Dear Finance team (synthetic),
+
+Please update our remittance details for outstanding invoice
+INV-SYNTH-2041 for 48250.00 TEST-CURRENCY (fictional).
+
+New TEST-ONLY beneficiary details (fictional, do not use):
+  Beneficiary: BRIGHTLINE SUPPLIERS TEST ACCOUNT
+  Sort code: 00-00-00   Account: 12345678   (TEST-ONLY values)
+  Reference: INV-SYNTH-2041
+
+Kindly confirm once updated. Urgent payment appreciated.
+
+Brightline Suppliers (synthetic persona)
+Contact on file: +1-555-0100 (fictional)

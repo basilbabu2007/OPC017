@@ -1,0 +1,198 @@
+// OPC017 frontend: correlation explorer, timeline drill-down, explainable AI, tamper-evident vault.
+let CASE_ID = 'CASE-2026-PHISH01';
+let DB = { arts: [], findings: [], graph: null, timeline: [] };
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('nav button').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+  b.classList.add('active'); $('tab-' + b.dataset.tab).classList.add('active');
+});
+document.addEventListener('keydown', (e) => {
+  if (!e.altKey || e.ctrlKey || e.metaKey) return;
+  const tabs = ['dash', 'corr', 'time', 'ai', 'vault'];
+  const i = ['1', '2', '3', '4', '5'].indexOf(e.key);
+  if (i >= 0) { e.preventDefault(); document.querySelector(`[data-tab="${tabs[i]}"]`).click(); }
+});
+
+function renderStatus() {
+  const set = (id, v) => { const el = $(id); if (el) el.textContent = v; };
+  set('stArts', DB.arts.length);
+  set('stFind', DB.findings.length);
+  set('stCorr', DB.graph ? DB.graph.edges.length : 0);
+  set('stTime', DB.timeline.length);
+}
+
+async function loadCases() {
+  const r = await fetch('/api/analysis/cases').then(x => x.json());
+  $('caseSel').innerHTML = r.map(c => `<option value="${c.case_id}">${esc(c.case_id)} — ${esc(c.title.slice(0, 40))}</option>`).join('');
+  if (r[0]) CASE_ID = r[0].case_id;
+  const st = $('stCase'); if (st) st.textContent = r.length;
+  $('caseSel').value = CASE_ID;
+  $('caseSel').onchange = (e) => { CASE_ID = e.target.value; boot(); };
+}
+
+async function boot() {
+  const q = '?case_id=' + encodeURIComponent(CASE_ID);
+  const [arts, findings, graph, tl] = await Promise.all([
+    fetch('/api/analysis/artifacts' + q).then(r => r.json()),
+    fetch('/api/analysis/findings' + q).then(r => r.json()),
+    fetch('/api/analysis/graph' + q).then(r => r.json()),
+    fetch('/api/analysis/timeline' + q).then(r => r.json()),
+  ]);
+  DB = { arts, findings, graph, timeline: tl.events || [] };
+  $('caseTitle').textContent = CASE_ID;
+  renderDash(); renderCorr(); renderTimeline(); renderAI(); renderVault(); renderStatus();
+}
+
+// --- Dashboard ---
+const ICONS = {
+  arts: '<svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.6"/><circle cx="18" cy="6" r="2.6"/><circle cx="12" cy="18" r="2.6"/><path d="M8 7.5l3 8M16 7.5l-3 8M8.5 6h7"/></svg>',
+  ev: '<svg viewBox="0 0 24 24"><rect x="4" y="9" width="16" height="11" rx="2"/><path d="M8 9V7a4 4 0 018 0v2"/></svg>',
+  flag: '<svg viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 4h12l-2.5 4L17 12H5"/></svg>',
+  link: '<svg viewBox="0 0 24 24"><path d="M10 14a5 5 0 007 0l3-3a5 5 0 00-7-7l-1.5 1.5"/><path d="M14 10a5 5 0 00-7 0l-3 3a5 5 0 007 7l1.5-1.5"/></svg>',
+  clock: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg>'
+};
+const SEV_ORDER = ['Critical', 'High', 'Medium', 'Low', 'Informational'];
+function toast(msg, kind = 'info') {
+  const box = $('toasts'); if (!box) return;
+  const t = document.createElement('div');
+  t.className = 'toast ' + kind; t.textContent = msg;
+  box.appendChild(t);
+  setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 320); }, 3600);
+}
+function renderDash() {
+  const evCount = new Set(DB.arts.map(a => a.evidence_id)).size;
+  const cards = [
+    [DB.arts.length, 'artifacts extracted', 'arts'], [evCount, 'evidence items', 'ev'],
+    [DB.findings.length, 'findings', 'flag'], [DB.graph.edges.length, 'correlations', 'link'], [DB.timeline.length, 'timeline events', 'clock'],
+  ];
+  $('statCards').innerHTML = cards.map(([n, l, ic]) =>
+    `<div class="card"><span class="ico">${ICONS[ic]}</span><b>${n}</b><span class="lbl">${l} (live DB)</span></div>`).join('');
+  $('hiFind').innerHTML = DB.findings.map(f =>
+    `<div class="edge" data-f="${f.finding_id}"><span class="pill sev-${f.severity}">${f.severity}</span> <b>${esc(f.rule_id)}</b><br>${esc(f.reason)}<br><code>${esc(f.finding_id)} · review: ${esc(f.review_status)}</code></div>`).join('') || 'No findings.';
+  $('hiFind').querySelectorAll('.edge').forEach(el => el.onclick = () => explain({ finding_id: el.dataset.f }));
+  // Severity distribution (live)
+  const counts = SEV_ORDER.map(s => [s, DB.findings.filter(f => f.severity === s).length]);
+  const total = Math.max(1, counts.reduce((a, [, c]) => a + c, 0));
+  $('sevBar').innerHTML = `<div class="sevbar">` + counts.map(([s, c]) =>
+    c ? `<div class="seg seg-${s}" style="width:${(c / total * 100).toFixed(1)}%" title="${s}: ${c}"></div>` : '').join('') + `</div>`;
+  const dot = { Critical: '#dc2626', High: '#db2777', Medium: '#d97706', Low: '#0891b6', Informational: '#7c3aed' };
+  $('sevLegend').innerHTML = counts.map(([s, c]) => `<span class="lg"><i style="background:${dot[s]}"></i>${s} <b>${c}</b></span>`).join('');
+  // Latest timeline events
+  const last = [...DB.timeline].slice(-4).reverse();
+  $('recentAct').innerHTML = last.map(e =>
+    `<div class="mini-ev" data-e="${e.id}"><time>${esc((e.time_utc || '').slice(11, 19))}</time><span>${esc(e.value.slice(0, 80))}</span></div>`).join('') || 'No timestamped events yet.';
+  $('recentAct').querySelectorAll('.mini-ev').forEach(el => el.onclick = () => document.querySelector('[data-tab="time"]').click());
+  renderGraphPreview();
+}
+function renderGraphPreview() {
+  const box = $('graphPreview'); if (!box || !DB.graph) return;
+  const g = DB.graph;
+  const linked = new Set();
+  g.edges.forEach(e => { linked.add(e.source_artifact_id); linked.add(e.target_artifact_id); });
+  const evs = g.nodes.filter(n => n.kind === 'evidence').slice(0, 4);
+  const arts = g.nodes.filter(n => n.kind === 'artifact' && linked.has(n.id)).slice(0, 10);
+  const nodes = [...evs, ...arts];
+  if (!nodes.length) { box.innerHTML = 'No graph data.'; return; }
+  const W = 560, H = 250, cx = W / 2, cy = H / 2 - 6, R = Math.min(W, H) / 2 - 30;
+  const pos = {};
+  nodes.forEach((nd, i) => { const a = (2 * Math.PI * i / nodes.length) - Math.PI / 2; pos[nd.id] = [cx + R * Math.cos(a), cy + R * Math.sin(a)]; });
+  const col = t => ({ url: '#db2777', domain: '#7c3aed', ip: '#0891b6', email: '#4f46e5', filename: '#b45309', filepath: '#b45309', hash: '#059669' }[t] || '#7c3aed');
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evidence relationship graph preview">`;
+  arts.forEach(a => { // spoke: artifact -> its evidence file
+    const p = pos[a.id], q = pos[a.evidence_id];
+    if (p && q) s += `<line x1="${p[0].toFixed(1)}" y1="${p[1].toFixed(1)}" x2="${q[0].toFixed(1)}" y2="${q[1].toFixed(1)}" stroke="#c9bdf0" stroke-width="1.4" stroke-dasharray="4 3"/>`;
+  });
+  g.edges.forEach(e => {
+    const p = pos[e.source_artifact_id], q = pos[e.target_artifact_id];
+    if (p && q) s += `<line x1="${p[0].toFixed(1)}" y1="${p[1].toFixed(1)}" x2="${q[0].toFixed(1)}" y2="${q[1].toFixed(1)}" stroke="#7c3aed" stroke-width="2.4"><title>${esc(e.relationship_type)} via ${esc(e.matching_method)}</title></line>`;
+  });
+  nodes.forEach(nd => {
+    const [x, y] = pos[nd.id];
+    if (nd.kind === 'evidence') s += `<g data-ev="${nd.id}" class="gnode"><rect x="${(x - 11).toFixed(1)}" y="${(y - 11).toFixed(1)}" width="22" height="22" rx="6" fill="#7c3aed"><title>${esc(nd.label)}</title></rect><text x="${x.toFixed(1)}" y="${(y + 30).toFixed(1)}" text-anchor="middle">${esc(nd.label.slice(0, 14))}</text></g>`;
+    else s += `<g data-a="${nd.id}" class="gnode"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="9" fill="${col(nd.type)}"><title>${esc(nd.type)}: ${esc(nd.label)}</title></circle><text x="${x.toFixed(1)}" y="${(y + 24).toFixed(1)}" text-anchor="middle">${esc((nd.type || '').slice(0, 10))}</text></g>`;
+  });
+  box.innerHTML = s + `</svg>`;
+  box.querySelectorAll('.gnode[data-a]').forEach(el => el.onclick = () => { document.querySelector('[data-tab="corr"]').click(); showArtifact(el.dataset.a); });
+}
+
+// --- Smart correlation ---
+function renderCorr(list = DB.arts) {
+  const t = $('corrType').value, s = ($('corrSearch').value || '').toLowerCase();
+  const rows = list.filter(a => (!t || a.type === t) && (!s || (a.value + a.normalized_value + a.evidence_id).toLowerCase().includes(s))).slice(0, 200);
+  $('artTable').querySelector('tbody').innerHTML = rows.map(a =>
+    `<tr data-a="${a.artifact_id}"><td><span class="pill">${esc(a.type)}</span></td><td>${esc(a.value.slice(0, 80))}</td><td><code>${esc(a.evidence_id)} ${esc(a.source_location || '')}</code></td></tr>`).join('');
+  $('artTable').querySelectorAll('tr[data-a]').forEach(tr => tr.onclick = () => showArtifact(tr.dataset.a));
+  $('corrList').innerHTML = DB.graph.edges.map(e =>
+    `<div class="edge" data-c="${e.correlation_id}"><b>${esc(e.relationship_type)}</b> <span class="pill">${esc(e.matching_method)}</span><br>${esc(e.explanation)}<br><code>${esc(e.source_artifact_id.slice(0, 11))} ↔ ${esc(e.target_artifact_id.slice(0, 11))}</code></div>`).join('') || 'No correlations — only data-supported edges are shown.';
+  $('corrList').querySelectorAll('.edge').forEach(el => el.onclick = () => {
+    const e = DB.graph.edges.find(x => x.correlation_id === el.dataset.c);
+    $('nodeDetail').textContent = `RELATIONSHIP ${e.relationship_type}\nmethod: ${e.matching_method}\n${e.explanation}\nstrength: ${e.strength}\nlimits: ${e.limitations}\nsupporting: ${JSON.stringify(e.supporting_fields)}\ntimestamps: ${JSON.stringify(e.timestamps)}\nsource: ${e.source_artifact_id}\ntarget: ${e.target_artifact_id}`;
+  });
+}
+$('corrSearch').oninput = () => renderCorr(); $('corrType').onchange = () => renderCorr();
+function showArtifact(id) {
+  const a = DB.arts.find(x => x.artifact_id === id); if (!a) return;
+  const linked = DB.graph.edges.filter(e => e.source_artifact_id === id || e.target_artifact_id === id);
+  $('nodeDetail').textContent = `ARTIFACT ${a.type}: ${a.value}\nnormalized: ${a.normalized_value}\norigin → evidence ${a.evidence_id} @ ${a.source_location || 'n/a'} (extracted by ${a.extraction_method} ${a.parser_name}@${a.parser_version})\ntimestamp: ${a.normalized_timestamp_utc || 'unknown/ambiguous'} [${a.timezone_info}]\nstatus: ${a.status}\nlinked relationships: ${linked.map(l => l.relationship_type + ' (' + l.matching_method + ')').join('; ') || 'none'}`;
+}
+
+// --- Timeline (click → origin) ---
+function renderTimeline() {
+  const s = ($('timeSearch').value || '').toLowerCase(), sev = $('sevFilter').value;
+  const rows = DB.timeline.filter(e =>
+    (!s || (e.value + e.source_file + e.evidence_id).toLowerCase().includes(s)) &&
+    (!sev || e.linked_findings.some(f => f.severity === sev)));
+  $('timeline').innerHTML = rows.map(e =>
+    `<div class="ev" data-e="${e.id}"><time>${esc(e.time_utc)}</time> <span class="pill">${esc(e.type)}</span> ${esc(e.value.slice(0, 90))}<br><code>${esc(e.source_file)} · ${esc(e.evidence_id)}</code> ${e.linked_findings.map(f => `<span class="pill sev-${f.severity}">${esc(f.severity)} ${esc(f.rule_id)}</span>`).join(' ')}</div>`).join('')
+    || 'No timestamped events match. Artifacts with unknown timezones stay in Artifact Explorer (never force-assigned).';
+  $('timeline').querySelectorAll('.ev').forEach(el => el.onclick = () => {
+    const e = DB.timeline.find(x => x.id === el.dataset.e);
+    $('eventDetail').textContent = `EVENT ${e.type} @ ${e.time_utc} (UTC, investigator TZ conversion is display-only)\nvalue: ${e.value}\norigin → evidence ${e.evidence_id} (${e.source_file}) @ ${e.source_location}\nparser: ${e.parser} · tz: ${e.timezone_info}\nlinked findings: ${e.linked_findings.map(f => f.finding_id + '/' + f.rule_id).join(', ') || 'none'}\nOpen the Vault tab → ${e.evidence_id} → Verify hash to confirm the source file is unchanged.`;
+  });
+}
+$('timeSearch').oninput = renderTimeline; $('sevFilter').onchange = renderTimeline;
+
+// --- AI explainer ---
+function renderAI() {
+  $('aiFinding').innerHTML = DB.findings.map(f => `<option value="${f.finding_id}">${esc(f.rule_id)} [${esc(f.severity)}]</option>`).join('');
+}
+async function explain(payload) {
+  $('aiOut').textContent = 'Retrieving supporting evidence…';
+  const r = await fetch('/api/analysis/explain', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...payload, case_id: CASE_ID }) }).then(x => x.json());
+  $('aiBadge').textContent = 'AI: ' + r.mode;
+  $('aiOut').textContent = r.explanation + `\n\n--- citations ---\nevidence: ${(r.citations.evidence_ids || []).join(', ')}\nfindings: ${(r.citations.finding_ids || []).join(', ')}\nlimits: ${r.limits}` + (r.llm_text ? `\n\n--- LLM-grounded ---\n${r.llm_text}` : '\n\n(LLM unavailable — deterministic template used. Set AI_ENABLED=true + OPENAI_API_KEY to enable.)');
+  toast(`Explanation ready — cited ${(r.citations.evidence_ids || []).length} evidence items`, 'ok');
+  document.querySelector('[data-tab="ai"]').click();
+}
+$('aiExplainBtn').onclick = () => explain({ finding_id: $('aiFinding').value });
+$('aiAskBtn').onclick = () => explain({ question: $('aiQ').value });
+
+// --- Tamper-evident vault ---
+async function renderVault() {
+  const ids = [...new Set(DB.arts.map(a => a.evidence_id))];
+  const cards = await Promise.all(ids.map(id => fetch('/api/vault/' + id).then(r => r.json())));
+  $('vaultList').innerHTML = cards.map(({ vault }) =>
+    `<div class="vaultcard"><b>${esc(vault.original_filename)}</b> <span class="pill">${esc(vault.detected_format)} · ${vault.size_bytes} bytes</span><br>` +
+    `<code>ID ${vault.evidence_id} · case ${vault.case_id} · uploader ${esc(vault.uploader)} · uploaded ${esc(vault.uploaded_at_utc)}</code><br>` +
+    `<code>SHA-256 ${vault.recorded_sha256}</code><br>` +
+    `<span class="${vault.integrity.match ? 'ok' : 'bad'}">${vault.integrity.match ? '● hash matches on disk' : '● WARNING: mismatch/missing'}</span> ` +
+    `<button data-v="${vault.evidence_id}" data-act="view">Inspect + custody</button> ` +
+    `<button data-v="${vault.evidence_id}" data-act="verify">Re-verify hash</button></div>`).join('');
+  $('vaultList').querySelectorAll('button').forEach(b => b.onclick = async () => {
+    const id = b.dataset.v;
+    if (b.dataset.act === 'verify') {
+      const r = await fetch('/api/vault/' + id + '/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ actor: 'investigator.demo' }) }).then(x => x.json());
+      $('vaultDetail').textContent = `VERIFY ${id}\nrecorded:     ${r.recorded_hash}\nrecalculated: ${r.recalculated_hash}\nstatus: ${r.status} @ ${r.verified_at_utc}\n${r.warning || 'OK: original preserved; analysis uses working copy.'}`;
+      toast(r.status === 'verified' ? `Hash verified — ${id}` : `Integrity warning — ${id}: ${r.status}`, r.status === 'verified' ? 'ok' : 'info');
+      boot(); return;
+    }
+    const v = await fetch('/api/vault/' + id).then(x => x.json());
+    $('vaultDetail').textContent = `EVIDENCE ${v.vault.evidence_id}\nfile: ${v.vault.original_filename} (${v.vault.detected_format}, ${v.vault.size_bytes} B)\nSHA-256: ${v.vault.recorded_sha256}\nuploaded: ${v.vault.uploaded_at_utc} by ${v.vault.uploader} → case ${v.vault.case_id}\nstorage: ${v.vault.storage.stored_path} (exists=${v.vault.storage.file_exists}, no public access)\nartifacts from this file: ${v.vault.artifact_count}\n\nCHAIN OF CUSTODY (${v.chain_of_custody.length} events):\n` +
+      v.chain_of_custody.map(e => `· ${e.timestamp_utc} ${e.action} by ${e.actor} → ${e.verification_result || 'recorded'} [${e.event_hash.slice(0, 12)}… prev ${String(e.prev_hash).slice(0, 12)}]`).join('\n');
+  });
+}
+
+loadCases().then(boot);

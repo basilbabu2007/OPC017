@@ -1,0 +1,24 @@
+SAFETY NOTICE — OPC017 synthetic demo data
+============================================
+Everything under data/demo/ is INERT, FAKE test data for hackathon
+demonstration only:
+
+- Plain-text files only (.eml, .csv, .log, .json, .txt). NO executables,
+  NO scripts, NO macros, NO real malware, NO EICAR test strings.
+- All people, companies, emails, IPs and domains are FICTIONAL.
+  IPs use RFC 5737 documentation ranges (192.0.2.x, 198.51.100.x,
+  203.0.113.x). Domains use example.com / .example / .invalid style
+  names plus clearly fake "-synth" labels.
+- File hashes recorded here are hashes OF THESE TEXT FILES (or
+  obviously fabricated 64-hex placeholders labelled synthetic).
+  They match nothing in the real world.
+- Nothing here can harm your laptop. The backend never executes
+  uploaded or demo files — it only reads them as text and hashes them.
+
+Scenarios (select via the "Active case" dropdown in the UI):
+  CASE-2026-PHISH01  Suspected Online Banking Phishing      data/demo/phishing/
+  CASE-2026-FRAUD02  Vendor Invoice Fraud (BEC)             data/demo/bec-fraud/
+  CASE-2026-TROJAN03 Trojanized Utility Installer           data/demo/trojan-dl/
+  CASE-2026-RANSOM04 Suspected Ransomware Precursor         data/demo/ransomware-sim/
+
+Rebuild:  cd backend && cmd /c "node src/seed.js" && cmd /c "node tests/verify.js"

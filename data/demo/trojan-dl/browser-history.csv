@@ -1,0 +1,4 @@
+visit_id,url,domain,username,event_time_utc,type,notes
+1,http://free-pdf-tools-download.example-info/setup/FreePDFConverter-Setup-SYNTH.exe,free-pdf-tools-download.example-info,ws-user.synth,2026-10-05T10:12:00Z,visit,SYNTHETIC freeware search result click
+2,http://free-pdf-tools-download.example-info/setup/FreePDFConverter-Setup-SYNTH.exe,free-pdf-tools-download.example-info,ws-user.synth,2026-10-05T10:12:44Z,download,SYNTHETIC installer download (TEXT-ONLY record, no binary)
+3,https://www.example-bank.com/login,www.example-bank.com,ws-user.synth,2026-10-05T09:30:00Z,visit,SYNTHETIC benign baseline

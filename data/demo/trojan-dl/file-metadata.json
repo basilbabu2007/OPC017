@@ -1,0 +1,12 @@
+{
+ "synthetic": true,
+ "note": "SYNTHETIC download record. No binary exists. Hash is a fabricated placeholder for rule testing.",
+ "file": {
+  "filename": "FreePDFConverter-Setup-SYNTH.exe",
+  "path": "C:\\Users\\synth\\Downloads\\FreePDFConverter-Setup-SYNTH.exe",
+  "sha256": "dededededededededededededeadadadadadadbebebebebebebeefefefefefef",
+  "size_bytes": 4123456,
+  "download_url": "http://free-pdf-tools-download.example-info/setup/FreePDFConverter-Setup-SYNTH.exe",
+  "download_time_utc": "2026-10-05T10:12:44Z"
+ }
+}

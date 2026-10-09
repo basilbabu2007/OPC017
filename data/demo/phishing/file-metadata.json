@@ -1,0 +1,14 @@
+{
+ "synthetic": true,
+ "note": "SYNTHETIC file metadata record for OPC017 demo. Not a real system file.",
+ "files": [
+  {
+   "filename": "statement-oct.pdf",
+   "path": "/home/synth-user/Downloads/statement-oct.pdf",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size_bytes": 184320,
+   "download_url": "http://secure-bank-verify-support.example-info/login?session=synth-demo-abc123",
+   "download_time_utc": "2026-10-07T09:19:40Z"
+  }
+ ]
+}

@@ -1,0 +1,14 @@
+{
+ "synthetic": true,
+ "note": "SYNTHETIC invoice record. Fictional supplier and TEST-ONLY bank details.",
+ "invoice": {
+  "id": "INV-SYNTH-2041",
+  "amount": "48250.00",
+  "currency": "TEST-CURRENCY",
+  "sender_domain": "brightline-suppliers.example",
+  "reply_to": "billing@brightline-suppliers-billing.example-info",
+  "beneficiary": "BRIGHTLINE SUPPLIERS TEST ACCOUNT",
+  "sort_code": "00-00-00",
+  "account": "12345678"
+ }
+}

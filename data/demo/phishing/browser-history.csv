@@ -1,0 +1,4 @@
+visit_id,url,domain,username,event_time_utc,type,notes
+1,http://secure-bank-verify-support.example-info/login?session=synth-demo-abc123,secure-bank-verify-support.example-info,j.doe.synth,2026-10-07T09:19:00Z,visit,SYNTHETIC click-through from demo email
+2,https://www.example-bank.com/login,www.example-bank.com,j.doe.synth,2026-10-07T08:55:00Z,visit,SYNTHETIC benign baseline visit
+3,http://secure-bank-verify-support.example-info/login?session=synth-demo-abc123,secure-bank-verify-support.example-info,j.doe.synth,2026-10-07T09:19:40Z,download,SYNTHETIC downloaded file statement-oct.pdf
