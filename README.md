@@ -1,251 +1,115 @@
-# OPC017 — AI-Assisted Digital Forensics & Cyber Intelligence Platform
+#  [ AI-Powered Digital Forensics Platform for Automated Evidence Analysis, Cyber Threat Detection, Incident Investigation, and Actionable Intelligence Generation]
 
-An **explainable evidence correlation engine** that connects fragmented digital artifacts from
-multiple evidence sources into a single interactive investigation timeline, then explains *why*
-those events may be related.
+**OPCODE IMPACT 2026 | Hackathon Submission**
 
-The goal is **not** to build another Autopsy-style forensic scanner. It is to build a smarter
-investigation assistant that answers:
+**Team ID:** [OPC017]
 
-- **What** happened?
-- **When** did it happen?
-- **Which** pieces of evidence are connected?
-- **Why** should an investigator look at them?
+## 1. Problem Statement
 
-> All examples in this document use synthetic data. Never use real personal messages,
-> credentials, or private evidence in a demo.
+Digital crimes such as online fraud, phishing, identity theft, cyberbullying, ransomware, and unauthorized access are increasing rapidly. These incidents often leave important digital evidence across smartphones, computers, emails, social media, web browsers, cloud platforms, and storage devices. However, investigators face difficulties in collecting and analyzing this large volume of data within a limited time. Evidence may be deleted, hidden, modified, or scattered across multiple devices, making manual investigation slow and error-prone. Identifying suspicious files, messages, URLs, login activities, and communication patterns also requires significant technical expertise.
 
----
+## 2. Solution Title
 
-## The Problem
+**OPC017 —  AI-Powered Digital Forensics Platform for Automated Evidence Analysis, Cyber Threat Detection, Incident Investigation, and Actionable Intelligence Generation **
 
-An investigator examining suspected online banking fraud finds, across separate sources:
+## 3. Solution Description
 
-- A suspicious link inside an email
-- A browser-history entry showing that link was visited
-- An unfamiliar IP address in an authentication log
-- A file downloaded around the same time
+Our proposed solution aims to develop an Al-assisted Digital Forensics and Cyber Intelligence Platform that helps investigators analyze digital evidence efficiently. The system will allow authorized users to upload forensic evidence and automatically extract relevant information such as files, metadata, timestamps, URLs, email addresses, IP addresses, and suspicious activities. It will identify potential threats and unusual patterns, organize important evidence, and provide a risk assessment with explanations. The platform will also maintain evidence integrity and a basic chain-of-custody record while generating a structured forensic investigation report. This can reduce investigation time, assist cybersecurity teams in prioritizing important evidence, and make preliminary digital forensic analysis mo accessible and efficient.
 
-Each artifact is weak on its own. The real work is understanding **how they relate**. OPC017
-automates that correlation and produces a traceable, explainable result.
+## 4. Architecture Diagram
 
----
+![Architecture Diagram](docs/architecture.png)
 
-## Core Concept
+**Workflow:** evidence upload → format validation → SHA-256 hashing and original preservation
+→ format-aware artifact extraction → deterministic detection rules → cross-source correlation
+(shared indicators + time-window proximity) → case-scoped storage (SQLite) → investigation
+dashboard (artifact explorer, relationship graph, timeline, AI explainer, tamper-evident vault).
 
-### Evidence Correlation Engine (the headline feature)
+The platform is split into two read-only-toward-each-other stacks: a **Node workspace** (the
+interactive UI + REST API, served at `http://localhost:4000/`) and a **Python/FastAPI service**
+(the `app/` library and Swagger API). They do not share a database.
 
-Given uploaded evidence, the engine:
+## 5. Technology Stack
 
-1. Extracts entities — timestamps, URLs, IP addresses, email addresses, usernames, file hashes.
-2. Finds **shared entities** appearing across different evidence files.
-3. Orders events **chronologically**.
-4. Links potentially related evidence using time-window proximity + shared indicators.
-5. Explains **why** a relationship may be relevant, with **evidence IDs** for every claim.
+- **Frontend:** Single-page HTML/CSS/JavaScript (no build step), served by the backend
+- **Backend:** Node.js 24 + Express (REST API + static UI); optional Python + FastAPI service (`app/`)
+- **Database:** SQLite — Node's built-in `node:sqlite` (`backend/data/forensics.db`); Python uses `app/evidence.db`
+- **Other Technologies:** SHA-256 (evidence integrity + hash-linked audit log), JWT + bcrypt (auth),
+  Helmet/CORS, multer, zod; Python side uses `re`/`csv`/`json` parsers, pytest
 
-**Example output**
+## 6. Quick Start Guide
 
-```
-Potentially related activity detected
+**Prerequisites:**
+- Node.js 22 or newer (Node 24 recommended; `node:sqlite` is built in)
+- Windows PowerShell 5.1 (or any shell), Git
+- Optional: Python 3.10+ for the FastAPI service
 
-  10:30  Suspicious email received            (E001, Email export)         Medium
-  10:32  Associated URL visited               (E002, Browser history)      High
-  10:34  Login from unfamiliar IP address     (E003, Authentication log)   High
+**Installation & Execution (Node workspace — dashboard + API):**
 
-Reason for flagging: the same URL appears in the email and browser evidence,
-and login activity occurred shortly afterward.
+```bash
+cd backend
+npm install
 
-Confidence: Moderate — timestamps and the shared URL support a possible
-relationship, but do not prove the email caused the login activity.
-```
+# Build the 4 synthetic demo cases (creates data/forensics.test.db)
+node src/seed.js
 
-Timestamps alone do **not** establish causation. Relationships are labeled
-**confirmed / possible / unrelated**, and time zones and device-clock differences are noted.
+# Optional: verify fixtures, hashes, audit chain, and case isolation
+node tests/verify.js        # expect: ALL CHECKS PASSED
 
----
-
-## Features
-
-| # | Feature | Status |
-|---|---------|--------|
-| 1 | **AI-Powered Evidence Correlation** — link artifacts across sources | MVP core |
-| 2 | **Explainable Findings** — every flag has a reason, supporting evidence, and limitations | MVP core |
-| 3 | **Interactive Investigation Timeline** — clickable, unified view of events | MVP core |
-| 4 | **Tamper-Evident Evidence Vault** — SHA-256 hashing + hash-linked audit log | MVP core |
-| 5 | **AI Investigation Chatbot** — retrieval-based Q&A grounded in evidence IDs | Optional |
-| 6 | **Forensic Report Generator** — PDF with findings, timeline, graph, integrity results | MVP core |
-
-### Explicitly out of scope (for now)
-
-- Guaranteed deleted-data recovery
-- Automatic acquisition from smartphones / locked devices / cloud accounts
-- Automatic decryption
-- Blockchain-based storage
-- Training a custom large model
-
-These are marked as **planned future integrations**, not current claims. A website cannot
-automatically reach into every device or cloud account; recovery depends on device state,
-encryption, backups, and forensic images.
-
----
-
-## Architecture
-
-```
-1.  User uploads evidence
-        ↓
-2.  Backend validates file (format, size, safety)
-        ↓
-3.  Evidence preservation  → evidence ID, SHA-256 hash, secure original
-        ↓
-4.  Artifact extraction    → URLs, IPs, emails, timestamps, hashes, log events
-        ↓
-5.  Analysis engine        → rule-based detection + validated indicator lists
-        ↓
-6.  Correlation engine     → link related artifacts & events (NetworkX)
-        ↓
-7.  AI explanation         → summaries grounded in verified findings
-        ↓
-8.  Investigation dashboard→ findings, risk levels, relationships, timeline
-        ↓
-9.  Report generation      → PDF with supporting evidence & integrity info
+# Start the app (serves the dashboard + API)
+node src/server.js
 ```
 
-The processing tool name and version are recorded for every step; extraction itself must be
-auditable.
+Then open **http://localhost:4000/** and pick a case in the **Active case** dropdown.
+On Windows you can also just double-click `start.bat` from the repo root.
 
-### Tech stack
+**Optional (Python FastAPI service):**
 
-| Component | Technology | Purpose |
-|-----------|------------|---------|
-| Frontend | React + Tailwind CSS | Dashboard, uploads, timeline |
-| Backend | Python + FastAPI | APIs and investigation workflows |
-| Extraction | Python `re`, format parsers | Artifacts and metadata |
-| Hashing | Python `hashlib` | SHA-256 calculate & verify |
-| Database | SQLite (→ PostgreSQL) | Cases, artifacts, findings, audit |
-| Correlation | Python + NetworkX | Relationship graph |
-| Detection | Python rules + indicator lists | Known-suspicious patterns |
-| AI explanation | LLM (API or local) | Summaries of verified findings only |
-| Timeline | JS timeline/chart library | Chronological activity |
-| Reporting | Python PDF library | Structured reports |
+```bash
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m pytest -v          # run the test suite
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload   # Swagger UI at /docs
+```
 
-Start with SQLite for a local prototype; migrate to PostgreSQL when multi-user access and
-richer case management are needed.
+## 7. Output Screenshots
 
----
+![Output Screenshot](docs/output.png)
 
-## Design Principles
+The dashboard shows live, case-scoped counts of evidence, artifacts, findings, correlations and
+timeline events (never hardcoded). Selecting a finding returns an evidence-grounded explanation
+that cites evidence IDs. The **Correlation** tab lists extracted artifacts with their source
+line/row and shows relationships only when supported by an implemented rule; the **Timeline**
+view is UTC-sorted and clicking an event traces it back to its file, line, and parser; the
+**Vault** tab re-verifies SHA-256 hashes on demand.
 
-1. **AI must not invent evidence.** Every factual claim references extracted records via
-   evidence IDs. If evidence is insufficient, the system says so instead of guessing.
-2. **The LLM explains; rules decide.** Verifiable analysis produces findings; the model only
-   summarizes and interprets them.
-3. **Human review required.** The system surfaces indicators that warrant investigation — it
-   never declares that a person committed a crime.
-4. **Tamper-evident, not tamper-proof.** A hash-linked audit log (each entry stores the previous
-   entry's hash) detects modification, but an admin who can rewrite the whole log could rebuild
-   the chain. Protect it with access controls, restricted writes, and independent backups.
-5. **Traceability.** A reviewer must be able to locate the original evidence behind every finding.
+Demo cases (all synthetic and inert): `CASE-2026-PHISH01` (online banking phishing),
+`CASE-2026-FRAUD02` (vendor invoice / BEC fraud), `CASE-2026-TROJAN03` (trojanized installer),
+`CASE-2026-RANSOM04` (ransomware precursor).
 
-### Risk scoring (illustrative, must be calibrated)
+## 8. Future Scope
 
-| Indicator | Example points |
-|-----------|----------------|
-| URL matches a known malicious indicator | +40 |
-| Executable matches a validated rule | +35 |
-| Unusual login pattern | +15 |
-| Related suspicious activity nearby in time | +10 |
+- Shared-indicator correlation for additional entity types (certificates, wallet addresses, phone numbers)
+- Automated timeline export and PDF forensic reporting with integrity annexes
+- Multiple-case comparison and investigation prioritization
+- Optional, opt-in LLM explanations strictly grounded in stored records (never inventing evidence)
+- Support for forensic disk images and mobile/cloud artifacts via documented import formats
 
-Weights are examples only. Define, test, and calibrate your own; avoid double-counting
-correlated indicators. Do not display a numeric confidence score unless it is meaningfully
-calculated and validated.
+## 9. Team Contributions
 
----
+| Member Name | Contribution |
+|-------------|--------------|
+| [Name 1] | [Work completed] |
+| [Name 2] | [Work completed] |
+| [Name 3] | [Work completed] |
 
-## Demo Scenario — Online Banking Phishing
+## 10. Tools Used
 
-Synthetic dataset: a suspicious email, a browser-history export, an authentication log, a
-downloaded test file, and a record of an attempted transaction.
-
-1. **Create case** — "Suspected Banking Phishing".
-2. **Upload evidence** — all five prepared files.
-3. **Verify integrity** — hashes computed, inventory recorded.
-4. **Extract artifacts** — URLs, IPs, timestamps, relevant events.
-5. **Detect suspicious activity** — flag the URL and selected auth events per documented rules.
-6. **Correlate** — match shared artifacts and nearby events.
-7. **Show timeline** — the recorded order of events.
-8. **Ask the assistant** — *"What evidence supports the possibility of a phishing incident?"*
-9. **Generate report** — download findings with supporting evidence.
-
----
-
-## Evaluation
-
-Build a labeled test set of known suspicious and benign events and report **actual** results
-(never invented accuracy figures).
-
-| Metric | What it tells you |
-|--------|-------------------|
-| Precision | How many flagged findings are actually relevant |
-| Recall | How many relevant findings were identified |
-| False-positive rate | How often benign activity is incorrectly flagged |
-| Processing time | How long analysis takes for a defined dataset |
-| Correlation accuracy | How often proposed relationships are correct |
-| Integrity verification | Whether controlled modifications are detected |
-| Report traceability | Whether each finding traces to its original evidence |
-
-Detection accuracy and correlation accuracy are measured separately.
-
----
-
-## Limitations
-
-| Limitation | Why it matters | Mitigation |
-|------------|----------------|------------|
-| Broad scope | Devices/platforms need different acquisition | Support a defined format set first |
-| False positives | Legitimate activity may be flagged | Explainable rules + labeled validation |
-| AI hallucination | LLM may invent connections | Evidence IDs required; explicit "unknown" |
-| Deleted-data recovery | Often overwritten/encrypted | Future integration with forensic images |
-| Evidence integrity | A hash alone doesn't protect anything | Secure storage, permissions, audit log |
-| Chain of custody | Timestamp + username is insufficient | Record method, source, handler, transfers |
-| No evaluation | Cannot prove accuracy/speed | Labeled tests + reported metrics |
-| Device/cloud compatibility | Providers differ | Document supported formats explicitly |
-| Security & privacy | Evidence is sensitive | Auth, access control, encryption, retention |
-| Legal/procedural | Automated results aren't proof | Document methods, retain originals, human review |
-
----
-
-## Roadmap
-
-- [ ] **M1 — Case & Evidence Management**: create case, upload supported files, hash, verify, view history
-- [ ] **M2 — Smart Artifact Extraction**: regex/parsers → searchable artifact tables
-- [ ] **M3 — Threat Detection**: URL/indicator matching, unusual auth patterns (rule-based, explainable)
-- [ ] **M4 — Correlation & Timeline**: shared entities, time-window links, NetworkX graph, timeline UI
-- [ ] **M5 — Explainable Report**: PDF with inventory, integrity, findings, timeline, AI summary, limitations
-- [ ] Evidence relationship graph (interactive)
-- [ ] Investigation copilot (retrieval-based chatbot)
-- [ ] Multiple-case comparison
-- [ ] Investigation prioritization
-
----
-
-## Supported Evidence Formats (initial)
-
-- `.txt`, `.log` — plain text and log files
-- `.eml` — email exports
-- `.csv` — browser / authentication logs
-- `.json` — exported records
-
-Forensic disk images and mobile-device artifacts are planned for later.
-
----
-
-## References
-
-- NIST, *Digital Evidence Preservation* and evidence-management guidance.
-
----
-
-## License
-
-See [LICENSE](LICENSE).
+| Tool / Platform | Purpose / Why Used |
+|-----------------|--------------------|
+| Node.js 24 + Express | Backend REST API and static UI host |
+| SQLite (`node:sqlite`) | Zero-dependency, local, case-scoped evidence store |
+| Python + FastAPI | Secondary service and Swagger-documented API |
+| Git / GitHub | Version control and collaboration |
+| VS Code | Code editing and debugging |
+| [AI Tool, if used] | [How and why AI was used] |
