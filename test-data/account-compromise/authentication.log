@@ -1,0 +1,8 @@
+# SYNTHETIC DEMO DATA — fictional account
+2026-10-08T08:14:02Z user=alex.morgan@example.test event=login result=success source_ip=198.51.100.24 session=SESS-1001 mfa=push
+2026-10-08T08:19:41Z user=alex.morgan@example.test event=login result=failed source_ip=203.0.113.77 reason=invalid_password
+2026-10-08T08:20:13Z user=alex.morgan@example.test event=login result=success source_ip=203.0.113.77 session=SESS-1002 mfa=push
+2026-10-08T08:20:16Z user=alex.morgan@example.test event=mfa_challenge result=approved source_ip=203.0.113.77 session=SESS-1002
+2026-10-08T08:23:54Z user=alex.morgan@example.test event=mfa_method_added result=success source_ip=203.0.113.77 session=SESS-1002
+2026-10-08T08:25:07Z user=alex.morgan@example.test event=password_reset result=success source_ip=203.0.113.77 session=SESS-1002
+2026-10-08T08:42:30Z user=alex.morgan@example.test event=logout result=success source_ip=203.0.113.77 session=SESS-1002

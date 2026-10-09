@@ -33,40 +33,6 @@
           <div><h2>Case overview</h2><p>Live counts from the database — never hardcoded. Select a finding to get an evidence-grounded explanation.</p></div>
           <div class="hero-badges"><span class="hbadge">SHA-256 tracked</span><span class="hbadge">UTC timeline</span><span class="hbadge">Case-isolated AI</span></div>
         </div>
-        <div class="panel">
-          <div class="toolbar" style="justify-content:space-between">
-            <div>
-              <h2>Investigation cases</h2>
-              <p class="sub">Create a case for a new investigation.</p>
-            </div>
-            <button id="toggleNewCase" type="button">+ New Case</button>
-          </div>
-          <form id="newCaseForm" hidden>
-            <label for="newCaseTitle">Case title *</label>
-            <input id="newCaseTitle" required maxlength="200"
-                   placeholder="e.g. Suspected account compromise">
-            <label for="newCaseDescription">Description</label>
-            <textarea id="newCaseDescription" rows="3"
-                      placeholder="What needs to be investigated?"></textarea>
-            <label for="newCaseType">Incident type</label>
-            <select id="newCaseType">
-              <option value="phishing">Phishing</option>
-              <option value="fraud">Fraud</option>
-              <option value="malware">Malware</option>
-              <option value="ransomware">Ransomware</option>
-              <option value="account_compromise">Account compromise</option>
-              <option value="other" selected>Other</option>
-            </select>
-            <label for="newCaseInvestigator">Investigator (optional)</label>
-            <input id="newCaseInvestigator" maxlength="120"
-                   placeholder="Defaults to your logged-in account">
-            <div class="toolbar">
-              <button type="submit" id="createCaseBtn">Create Case</button>
-              <button type="button" id="cancelNewCase" class="secondary">Cancel</button>
-            </div>
-            <p id="newCaseStatus" class="detail" role="status" aria-live="polite"></p>
-          </form>
-        </div>
         <div class="cards" id="statCards"></div>
         <div class="dash-grid">
           <div class="panel"><h2>High-priority findings</h2><div id="hiFind"></div></div>

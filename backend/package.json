@@ -10,7 +10,7 @@
     "db:init": "node src/db.js",
     "db:seed": "node src/seed.js",
     "db:verify": "node tests/verify.js",
-    "test": "node --test tests/"
+    "test": "node tests/verify.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

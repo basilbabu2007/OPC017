@@ -1,0 +1,9 @@
+Subject: Urgent Account Verification
+From: security-alert@example.test
+To: analyst@example.test
+Timestamp: 2026-10-09 09:30:00
+
+Synthetic demo evidence:
+This message asks the recipient to verify their banking account urgently.
+The sender domain is a reserved example domain for testing.
+No real links, credentials, or personal information are included.

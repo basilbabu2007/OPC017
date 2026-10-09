@@ -10,11 +10,9 @@ The platform receives evidence from external tools and other team projects. It d
 
 ## 2. Current Technology Stack
 
-* **Service (Python):** FastAPI (`app/`), SQLite (`app/evidence.db`), pytest (`tests/`), Swagger UI.
+* **Service (Python):** FastAPI (`app/`), SQLite (`evidence.db` at the repository root), pytest (`tests/`), Swagger UI.
 * **Workspace (Node):** Express + built-in `node:sqlite` (`backend/`), served investigation UI (`backend/public/`).
-  Justification: this machine has Node 24 and no Python runtime, so the interactive
-  workspace was built on Node without replacing any Python code. Both stacks are
-  read-only toward each other's data stores — they do not share a database.
+  The Node workspace and Python service run as separate stacks and use separate databases.
 * **API documentation:** FastAPI Swagger UI (Python); REST + static UI (Node).
 
 Keep the current stacks unless a change is necessary and explicitly justified.
@@ -29,7 +27,7 @@ Keep the current stacks unless a change is necessary and explicitly justified.
 * `test-data/` — Sample evidence for development and testing (`auth.log`,
   `browser_history.csv`, `large.csv`, `sample.exe` — a 16-byte *text* fixture
   spelling "synthetic test", used for extension-validation tests; harmless).
-* `evidence/` — Python service storage (`evidence/originals/` + `app/evidence.db`);
+* `evidence/` — Python service storage (`evidence/originals/` + root-level `evidence.db`);
   local only, never commit original evidence.
 * `backend/` — Node workspace: Express API + SQLite (`backend/data/`), evidence vault
   (`backend/storage/evidence/`), UI (`backend/public/`), synthetic multi-case fixtures

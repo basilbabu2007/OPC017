@@ -1,0 +1,26 @@
+{
+  "dataset_type": "SYNTHETIC_DEMO",
+  "host": "WIN-ACCT-014",
+  "events": [
+    {
+      "timestamp_utc": "2026-10-08T08:18:55Z",
+      "event_id": "EP-001",
+      "user": "alex.morgan@example.test",
+      "event": "browser_process_started"
+    },
+    {
+      "timestamp_utc": "2026-10-08T08:21:02Z",
+      "event_id": "EP-002",
+      "user": "alex.morgan@example.test",
+      "event": "new_session_observed",
+      "details": "Synthetic marker; no actual cookie or credential"
+    },
+    {
+      "timestamp_utc": "2026-10-08T08:36:27Z",
+      "event_id": "EP-003",
+      "user": "alex.morgan@example.test",
+      "event": "unusual_outbound_connection",
+      "destination": "203.0.113.88:443"
+    }
+  ]
+}

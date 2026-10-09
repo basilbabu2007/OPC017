@@ -1,0 +1,6 @@
+timestamp_utc,user,event,object,result,source_ip,session_id
+2026-10-08T08:22:04Z,alex.morgan@example.test,mailbox_rule_created,Inbox,success,203.0.113.77,SESS-1002
+2026-10-08T08:26:42Z,alex.morgan@example.test,contact_export,Contacts,success,203.0.113.77,SESS-1002
+2026-10-08T08:31:18Z,alex.morgan@example.test,document_access,Quarterly-Forecast.xlsx,success,203.0.113.77,SESS-1002
+2026-10-08T08:34:51Z,alex.morgan@example.test,oauth_consent_granted,Finance Helper,success,203.0.113.77,SESS-1002
+2026-10-08T08:39:03Z,alex.morgan@example.test,mail_sent,external-recipient@example.test,success,203.0.113.77,SESS-1002

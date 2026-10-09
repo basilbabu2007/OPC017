@@ -39,16 +39,15 @@ First start clones `data/forensics.test.db` → `data/forensics.db` if empty.
 ## 5. Auth note
 Case CRUD + upload stay behind JWT (`/api/auth/register|login`, Bearer). Analysis/vault reads are demo-public but strictly case-scoped (no cross-case leakage — verified in tests).
 
-## 6. Python service (teammate stack — needs a Python 3 runtime)
-This machine has no Python runtime (only a Store shim), so these commands are
-documented but cannot execute here. On a machine with Python:
-```powershell
-cd C:\Users\bernie\opcode\OPC017
-python -m venv .venv; .\.venv\Scripts\Activate.ps1
+## 6. Python service
+The Python service uses FastAPI and SQLite. From the repository root, activate
+your virtual environment and run:
+```bash
+source .venv/bin/activate
 pip install -r requirements.txt
-python -m pytest -v            # suite in tests/ (imports resolve as `from app...`)
+python -m pytest -v
 uvicorn app.main:app --reload  # FastAPI + Swagger UI at http://127.0.0.1:8000/docs
 ```
-Notes: storage lives in `evidence/originals/` + `app/evidence.db` (both git-ignored);
+Notes: storage lives in `evidence/originals/` + root-level `evidence.db` (both git-ignored);
 fixtures in `test-data/` (`sample.exe` is a 16-byte text file, harmless); the Python
 and Node stacks do not share a database.

@@ -32,8 +32,8 @@ interactive UI + REST API, served at `http://localhost:4000/`) and a **Python/Fa
 ## 5. Technology Stack
 
 - **Frontend:** Single-page HTML/CSS/JavaScript (no build step), served by the backend
-- **Backend:** Node.js 24 + Express (REST API + static UI); optional Python + FastAPI service (`app/`)
-- **Database:** SQLite — Node's built-in `node:sqlite` (`backend/data/forensics.db`); Python uses `app/evidence.db`
+- **Backend:** Node.js 24 + Express (REST API + static UI); Python + FastAPI service (`app/`)
+- **Database:** SQLite — Node's built-in `node:sqlite` (`backend/data/forensics.db`); Python uses the repository-root `evidence.db`
 - **Other Technologies:** SHA-256 (evidence integrity + hash-linked audit log), JWT + bcrypt (auth),
   Helmet/CORS, multer, zod; Python side uses `re`/`csv`/`json` parsers, pytest
 
