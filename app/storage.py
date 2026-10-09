@@ -2,8 +2,7 @@
 import sqlite3
 from pathlib import Path
 
-DB_PATH = Path(__file__).parent / "evidence.db"
-
+DB_PATH = Path(__file__).resolve().parent.parent / "evidence.db"
 
 def get_connection():
     connection = sqlite3.connect(DB_PATH)
