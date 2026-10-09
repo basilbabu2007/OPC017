@@ -115,24 +115,7 @@ function renderGraphPreview() {
     else s += `<g data-a="${nd.id}" class="gnode"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="9" fill="${col(nd.type)}"><title>${esc(nd.type)}: ${esc(nd.label)}</title></circle><text x="${x.toFixed(1)}" y="${(y + 24).toFixed(1)}" text-anchor="middle">${esc((nd.type || '').slice(0, 10))}</text></g>`;
   });
   box.innerHTML = s + `</svg>`;
-  box.querySelectorAll('.gnode').forEach(el => {
-    el.style.cursor = 'pointer';
-    el.setAttribute('tabindex', '0');
-
-    const inspect = () => {
-      document.querySelector('[data-tab="corr"]').click();
-      if (el.dataset.a) showArtifact(el.dataset.a);
-      else if (el.dataset.ev) showEvidence(el.dataset.ev);
-    };
-
-    el.addEventListener('click', inspect);
-    el.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        inspect();
-      }
-    });
-  });
+  box.querySelectorAll('.gnode[data-a]').forEach(el => el.onclick = () => { document.querySelector('[data-tab="corr"]').click(); showArtifact(el.dataset.a); });
 }
 
 // --- Smart correlation ---
@@ -150,37 +133,6 @@ function renderCorr(list = DB.arts) {
   });
 }
 $('corrSearch').oninput = () => renderCorr(); $('corrType').onchange = () => renderCorr();
-function showEvidence(id) {
-  const ev = DB.graph?.nodes.find(
-    n => n.kind === 'evidence' && n.id === id
-  );
-  const panel = $('nodeDetail');
-
-  if (!ev) {
-    panel.textContent = `Evidence details unavailable for ID: ${id}`;
-    return;
-  }
-
-  const arts = DB.arts.filter(a => a.evidence_id === id);
-  const linked = DB.graph.edges.filter(e =>
-    arts.some(a =>
-      a.artifact_id === e.source_artifact_id ||
-      a.artifact_id === e.target_artifact_id
-    )
-  );
-
-  panel.textContent =
-    `EVIDENCE: ${ev.original_filename || ev.label}\n` +
-    `ID: ${ev.evidence_id || ev.id}\n` +
-    `Format: ${ev.detected_format || 'unknown'}\n` +
-    `Extracted artifacts: ${arts.length}\n\n` +
-    `Artifacts:\n${arts.map(a => `${a.type}: ${a.value}`).join('\n') || 'none'}\n\n` +
-    `Related relationships: ${
-      linked.map(e => e.relationship_type + ' (' + e.matching_method + ')')
-        .join('; ') || 'none'
-    }`;
-}
-
 function showArtifact(id) {
   const a = DB.arts.find(x => x.artifact_id === id); if (!a) return;
   const linked = DB.graph.edges.filter(e => e.source_artifact_id === id || e.target_artifact_id === id);

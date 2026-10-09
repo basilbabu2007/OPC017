@@ -149,3 +149,144 @@ def extract_artifacts(filename, data):
         )
 
     return []
+
+
+def extract_events(filename, data):
+    """Extract normalized forensic events from supported evidence formats."""
+    extension = filename.lower().rsplit(".", 1)[-1]
+    text = data.decode("utf-8-sig", errors="replace")
+    events = []
+
+    def add_event(row, line_number):
+        if not isinstance(row, dict):
+            return
+
+        normalized = {
+            str(key).strip().lower(): value
+            for key, value in row.items()
+            if key is not None and value is not None
+        }
+
+        timestamp = None
+        for key in ("timestamp_utc", "timestamp", "datetime", "time", "date"):
+            value = normalized.get(key)
+            if isinstance(value, str):
+                timestamp = valid_timestamp(value.strip())
+                if timestamp:
+                    break
+
+        event_name = next(
+            (
+                normalized[key]
+                for key in ("event", "event_type", "action", "activity")
+                if isinstance(normalized.get(key), str)
+                and normalized[key].strip()
+            ),
+            None,
+        )
+
+        # Browser history exports often contain only timestamp and URL.
+        if not event_name and normalized.get("url"):
+            event_name = "browser_visit"
+
+        if not timestamp or not event_name:
+            return
+
+        user = next(
+            (
+                normalized[key]
+                for key in ("user", "username", "account", "email")
+                if isinstance(normalized.get(key), str)
+                and normalized[key].strip()
+            ),
+            None,
+        )
+        source_ip = next(
+            (
+                normalized[key]
+                for key in ("source_ip", "src_ip", "ip_address", "ip")
+                if isinstance(normalized.get(key), str)
+                and normalized[key].strip()
+            ),
+            None,
+        )
+        session = next(
+            (
+                normalized[key]
+                for key in ("session_id", "session", "sessionid")
+                if isinstance(normalized.get(key), str)
+                and normalized[key].strip()
+            ),
+            None,
+        )
+
+        excluded = {
+            "timestamp_utc", "timestamp", "datetime", "time", "date",
+            "user", "username", "account", "email", "event", "event_type",
+            "action", "activity", "source_ip", "src_ip", "ip_address", "ip",
+            "session_id", "session", "sessionid",
+        }
+
+        events.append({
+            "timestamp": timestamp,
+            "user": user,
+            "event": str(event_name).strip(),
+            "source_ip": source_ip,
+            "session": session,
+            "details": {
+                str(key): value
+                for key, value in normalized.items()
+                if key not in excluded
+            },
+            "line": line_number,
+        })
+
+    if extension == "csv":
+        for line_number, row in enumerate(
+            csv.DictReader(io.StringIO(text)), start=2
+        ):
+            add_event(row, line_number)
+
+    elif extension == "json":
+        try:
+            parsed = json.loads(text)
+        except json.JSONDecodeError:
+            return []
+
+        if isinstance(parsed, dict):
+            rows = parsed.get("events", [])
+            if not isinstance(rows, list):
+                rows = [parsed]
+        elif isinstance(parsed, list):
+            rows = parsed
+        else:
+            rows = []
+
+        for line_number, row in enumerate(rows, start=1):
+            add_event(row, line_number)
+
+    elif extension in {"log", "txt", "eml", "md"}:
+        for line_number, line in enumerate(text.splitlines(), start=1):
+            timestamp_match = TIME_PATTERN.search(line)
+            if not timestamp_match:
+                continue
+
+            fields = {
+                key.lower(): value.strip().strip('"')
+                for key, value in re.findall(
+                    r'([A-Za-z_][A-Za-z0-9_]*)=("[^"]*"|[^\s]+)',
+                    line,
+                )
+            }
+            fields.setdefault("timestamp", timestamp_match.group())
+
+            # For lines like "2026-10-09T10:30:00Z LOGIN user=alice ...",
+            # derive the event name from the text following the timestamp.
+            remainder = line[timestamp_match.end():].strip()
+            event_match = re.match(r"([A-Za-z_][A-Za-z0-9_-]*)", remainder)
+            if event_match:
+                fields.setdefault("event", event_match.group(1).lower())
+
+            add_event(fields, line_number)
+
+    return events

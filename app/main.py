@@ -234,36 +234,40 @@ def get_correlations(window_seconds: int = 300):
         )
 
     records = storage.list_evidence()
-    all_artifacts = []
+    all_events = []
+    artifacts_analyzed = 0
 
     for record in records:
         evidence_id = record["evidence_id"]
         verified_record, file_path = get_verified_evidence(evidence_id)
-
+        filename = verified_record["original_filename"]
         data = file_path.read_bytes()
 
-        artifacts = extractor.extract_artifacts(
-            verified_record["original_filename"],
-            data,
-        )
+        artifacts = extractor.extract_artifacts(filename, data)
+        artifacts_analyzed += len(artifacts)
 
-        for artifact in artifacts:
-            artifact["evidence_id"] = evidence_id
-            artifact["source_type"] = verified_record["original_filename"]
+        events = extractor.extract_events(filename, data)
+        for event in events:
+            event["evidence_id"] = evidence_id
+            event["source_type"] = filename
+        all_events.extend(events)
 
-        all_artifacts.extend(artifacts)
-
-    findings = correlator.correlate_artifacts(
-        all_artifacts,
+    findings = correlator.correlate_events(
+        all_events,
         window_seconds=window_seconds,
     )
 
     return {
         "evidence_sources_analyzed": len(records),
-        "artifacts_analyzed": len(all_artifacts),
+        "artifacts_analyzed": artifacts_analyzed,
+        "events_analyzed": len(all_events),
         "window_seconds": window_seconds,
         "correlation_count": len(findings),
         "findings": findings,
+        "note": (
+            "Correlations are investigative leads, not proof of "
+            "compromise or causation."
+        ),
     }
 
 
