@@ -1,5 +1,6 @@
 
 import extractor
+import correlator
 import hashlib
 import os
 import uuid
@@ -190,4 +191,65 @@ def get_artifacts(evidence_id: str):
         "evidence_id": evidence_id,
         "artifact_count": len(artifacts),
         "artifacts": artifacts,
+    }
+
+
+@app.get("/correlations")
+def get_correlations(window_seconds: int = 300):
+    if not 1 <= window_seconds <= 3600:
+        raise HTTPException(
+            400,
+            "window_seconds must be between 1 and 3600",
+        )
+
+    records = storage.list_evidence()
+    all_artifacts = []
+
+    for record in records:
+        evidence_id = record["evidence_id"]
+        file_path = EVIDENCE_DIR / record["stored_filename"]
+
+        if not file_path.is_file():
+            raise HTTPException(
+                409,
+                f"Evidence file is missing: {evidence_id}",
+            )
+
+        # Verify integrity before analyzing the evidence.
+        digest = hashlib.sha256()
+
+        with open(file_path, "rb") as source:
+            for chunk in iter(lambda: source.read(64 * 1024), b""):
+                digest.update(chunk)
+
+        if digest.hexdigest() != record["sha256"]:
+            raise HTTPException(
+                409,
+                f"Evidence integrity check failed: {evidence_id}",
+            )
+
+        data = file_path.read_bytes()
+
+        artifacts = extractor.extract_artifacts(
+            record["original_filename"],
+            data,
+        )
+
+        for artifact in artifacts:
+            artifact["evidence_id"] = evidence_id
+            artifact["source_type"] = record["original_filename"]
+
+        all_artifacts.extend(artifacts)
+
+    findings = correlator.correlate_artifacts(
+        all_artifacts,
+        window_seconds=window_seconds,
+    )
+
+    return {
+        "evidence_sources_analyzed": len(records),
+        "artifacts_analyzed": len(all_artifacts),
+        "window_seconds": window_seconds,
+        "correlation_count": len(findings),
+        "findings": findings,
     }

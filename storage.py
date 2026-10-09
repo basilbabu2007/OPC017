@@ -50,8 +50,8 @@ def add_evidence(record):
 def list_evidence():
     with get_connection() as connection:
         rows = connection.execute("""
-            SELECT evidence_id, original_filename, sha256,
-                   size_bytes, uploaded_at
+            SELECT evidence_id, original_filename, stored_filename,
+                   sha256, size_bytes, uploaded_at
             FROM evidence
             ORDER BY uploaded_at DESC
         """).fetchall()
