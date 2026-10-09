@@ -24,22 +24,57 @@ if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
-$PythonCommand = "& '$Python' -m uvicorn app.main:app --reload --port 8000"
-$NodeCommand = "Set-Location '$Backend'; npm run dev"
-
 Write-Host "Starting OPC017 Python forensic engine..."
 Start-Process powershell.exe `
     -WorkingDirectory $Root `
-    -ArgumentList @("-NoExit", "-Command", $PythonCommand)
+    -ArgumentList @(
+        "-NoExit",
+        "-Command",
+        "& '$Python' -m uvicorn app.main:app --reload --port 8000"
+    )
 
 Write-Host "Starting OPC017 Node.js backend..."
 Start-Process powershell.exe `
     -WorkingDirectory $Backend `
-    -ArgumentList @("-NoExit", "-Command", $NodeCommand)
+    -ArgumentList @(
+        "-NoExit",
+        "-Command",
+        "Set-Location '$Backend'; npm run dev"
+    )
 
 Write-Host ""
-Write-Host "OPC017 services are starting."
+Write-Host "Waiting for the Node.js backend..."
+
+$Ready = $false
+
+for ($Attempt = 1; $Attempt -le 30; $Attempt++) {
+    try {
+        $Response = Invoke-RestMethod `
+            -Uri "http://127.0.0.1:4000/api/health" `
+            -TimeoutSec 2
+
+        $Ready = $true
+        break
+    }
+    catch {
+        Start-Sleep -Seconds 1
+    }
+}
+
+Write-Host ""
 Write-Host "Dashboard:  http://127.0.0.1:4000"
 Write-Host "Health:     http://127.0.0.1:4000/api/health"
 Write-Host "Python API: http://127.0.0.1:8000/docs"
-Write-Host "Close the two service windows to stop the services."
+
+if ($Ready) {
+    Write-Host "Backend is ready. Opening OPC017..."
+    Start-Process "http://127.0.0.1:4000"
+}
+else {
+    Write-Warning "Backend did not respond within 30 seconds."
+    Write-Host "Check the Node.js terminal for errors."
+    Write-Host "Once fixed, open http://127.0.0.1:4000 manually."
+}
+
+Write-Host ""
+Write-Host "Close the service windows to stop the services."
