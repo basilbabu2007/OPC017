@@ -1,5 +1,5 @@
 
-from correlator import correlate_artifacts
+from app.correlator import correlate_artifacts
 
 
 def test_correlates_events_from_different_sources():

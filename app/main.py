@@ -1,6 +1,4 @@
 
-import extractor
-import correlator
 import hashlib
 import os
 import uuid
@@ -10,13 +8,14 @@ from pathlib import Path
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 
-import storage
+from app import correlator, detector, extractor, storage
 
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 EVIDENCE_DIR = BASE_DIR / "evidence" / "originals"
 
 ALLOWED_EXTENSIONS = {".txt", ".log", ".eml", ".csv", ".json"}
+SCANNABLE_EXTENSIONS = {".txt", ".log", ".eml"}
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MiB
 
 EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
@@ -27,6 +26,35 @@ app = FastAPI(title="OPC017 Forensics Platform")
 
 def sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def get_verified_evidence(evidence_id: str):
+    """Retrieve evidence and verify its integrity before analysis."""
+    record = storage.get_evidence(evidence_id)
+
+    if record is None:
+        raise HTTPException(404, "Evidence ID not found")
+
+    file_path = EVIDENCE_DIR / record["stored_filename"]
+
+    if not file_path.is_file():
+        raise HTTPException(409, "Stored evidence file is missing")
+
+    digest = hashlib.sha256()
+
+    with open(file_path, "rb") as source:
+        for chunk in iter(lambda: source.read(64 * 1024), b""):
+            digest.update(chunk)
+
+    current_hash = digest.hexdigest()
+
+    if current_hash != record["sha256"]:
+        raise HTTPException(
+            409,
+            "Evidence hash mismatch; analysis refused",
+        )
+
+    return record, file_path
 
 
 @app.get("/")
@@ -43,7 +71,6 @@ async def upload_evidence(file: UploadFile = File(...)):
     if not file.filename:
         raise HTTPException(400, "A filename is required")
 
-    # Never use the submitted filename as a storage path.
     extension = Path(file.filename).suffix.lower()
 
     if extension not in ALLOWED_EXTENSIONS:
@@ -52,7 +79,6 @@ async def upload_evidence(file: UploadFile = File(...)):
             "Unsupported file type. Allowed: txt, log, eml, csv, json",
         )
 
-    # Read at most one byte over the limit.
     data = await file.read(MAX_FILE_SIZE + 1)
     await file.close()
 
@@ -67,30 +93,25 @@ async def upload_evidence(file: UploadFile = File(...)):
     final_path = EVIDENCE_DIR / stored_filename
     temp_path = EVIDENCE_DIR / (stored_filename + ".tmp")
 
-    file_hash = sha256_bytes(data)
-
     record = {
         "evidence_id": evidence_id,
         "original_filename": Path(file.filename).name,
         "stored_filename": stored_filename,
-        "sha256": file_hash,
+        "sha256": sha256_bytes(data),
         "size_bytes": len(data),
         "uploaded_at": datetime.now(timezone.utc).isoformat(),
     }
 
     try:
-        # Exclusive creation prevents overwriting an existing temp file.
         with open(temp_path, "xb") as output:
             output.write(data)
             output.flush()
             os.fsync(output.fileno())
 
-        # Publish the complete file before recording it in SQLite.
         os.replace(temp_path, final_path)
         storage.add_evidence(record)
 
     except Exception:
-        # Clean up incomplete or unregistered files on failure.
         temp_path.unlink(missing_ok=True)
 
         if final_path.exists():
@@ -134,7 +155,6 @@ def verify_evidence(evidence_id: str):
             "message": "Stored evidence file is missing",
         }
 
-    # Stream the file instead of loading it all into memory.
     digest = hashlib.sha256()
 
     with open(file_path, "rb") as source:
@@ -152,30 +172,10 @@ def verify_evidence(evidence_id: str):
         "hash_matches": matches,
     }
 
+
 @app.get("/evidence/{evidence_id}/artifacts")
 def get_artifacts(evidence_id: str):
-    record = storage.get_evidence(evidence_id)
-
-    if record is None:
-        raise HTTPException(404, "Evidence ID not found")
-
-    file_path = EVIDENCE_DIR / record["stored_filename"]
-
-    if not file_path.is_file():
-        raise HTTPException(404, "Stored evidence file is missing")
-
-    # Verify integrity before extraction.
-    digest = hashlib.sha256()
-
-    with open(file_path, "rb") as source:
-        for chunk in iter(lambda: source.read(64 * 1024), b""):
-            digest.update(chunk)
-
-    if digest.hexdigest() != record["sha256"]:
-        raise HTTPException(
-            409,
-            "Evidence hash mismatch; extraction refused",
-        )
+    record, file_path = get_verified_evidence(evidence_id)
 
     data = file_path.read_bytes()
 
@@ -194,6 +194,37 @@ def get_artifacts(evidence_id: str):
     }
 
 
+@app.get("/evidence/{evidence_id}/scan")
+def scan_evidence(evidence_id: str):
+    record, file_path = get_verified_evidence(evidence_id)
+
+    extension = Path(record["original_filename"]).suffix.lower()
+
+    if extension not in SCANNABLE_EXTENSIONS:
+        raise HTTPException(
+            415,
+            "SQL injection scanning currently supports .txt, .log, and .eml files",
+        )
+
+    text = file_path.read_text(
+        encoding="utf-8",
+        errors="replace",
+    )
+
+    findings = detector.detect_sqli(text)
+
+    return {
+        "evidence_id": evidence_id,
+        "filename": record["original_filename"],
+        "findings_count": len(findings),
+        "findings": findings,
+        "note": (
+            "Pattern matches are investigative leads, "
+            "not proof of an attack."
+        ),
+    }
+
+
 @app.get("/correlations")
 def get_correlations(window_seconds: int = 300):
     if not 1 <= window_seconds <= 3600:
@@ -207,37 +238,18 @@ def get_correlations(window_seconds: int = 300):
 
     for record in records:
         evidence_id = record["evidence_id"]
-        file_path = EVIDENCE_DIR / record["stored_filename"]
-
-        if not file_path.is_file():
-            raise HTTPException(
-                409,
-                f"Evidence file is missing: {evidence_id}",
-            )
-
-        # Verify integrity before analyzing the evidence.
-        digest = hashlib.sha256()
-
-        with open(file_path, "rb") as source:
-            for chunk in iter(lambda: source.read(64 * 1024), b""):
-                digest.update(chunk)
-
-        if digest.hexdigest() != record["sha256"]:
-            raise HTTPException(
-                409,
-                f"Evidence integrity check failed: {evidence_id}",
-            )
+        verified_record, file_path = get_verified_evidence(evidence_id)
 
         data = file_path.read_bytes()
 
         artifacts = extractor.extract_artifacts(
-            record["original_filename"],
+            verified_record["original_filename"],
             data,
         )
 
         for artifact in artifacts:
             artifact["evidence_id"] = evidence_id
-            artifact["source_type"] = record["original_filename"]
+            artifact["source_type"] = verified_record["original_filename"]
 
         all_artifacts.extend(artifacts)
 
