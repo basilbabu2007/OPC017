@@ -99,7 +99,20 @@ function renderGraphPreview() {
   const W = 560, H = 250, cx = W / 2, cy = H / 2 - 6, R = Math.min(W, H) / 2 - 30;
   const pos = {};
   nodes.forEach((nd, i) => { const a = (2 * Math.PI * i / nodes.length) - Math.PI / 2; pos[nd.id] = [cx + R * Math.cos(a), cy + R * Math.sin(a)]; });
-  const col = t => ({ url: '#db2777', domain: '#7c3aed', ip: '#0891b6', email: '#4f46e5', filename: '#b45309', filepath: '#b45309', hash: '#059669' }[t] || '#7c3aed');
+
+  const col = t => ({
+    url: '#db2777',
+    domain: '#7c3aed',
+    ip: '#0891b6',
+    email: '#4f46e5',
+    email_meta: '#64748b',
+    username: '#0f766e',
+    filename: '#b45309',
+    filepath: '#b45309',
+    hash: '#059669',
+    other: '#6b7280'
+  }[t] || '#7c3aed');
+
   let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evidence relationship graph preview">`;
   arts.forEach(a => { // spoke: artifact -> its evidence file
     const p = pos[a.id], q = pos[a.evidence_id];
@@ -107,7 +120,13 @@ function renderGraphPreview() {
   });
   g.edges.forEach(e => {
     const p = pos[e.source_artifact_id], q = pos[e.target_artifact_id];
-    if (p && q) s += `<line x1="${p[0].toFixed(1)}" y1="${p[1].toFixed(1)}" x2="${q[0].toFixed(1)}" y2="${q[1].toFixed(1)}" stroke="#7c3aed" stroke-width="2.4"><title>${esc(e.relationship_type)} via ${esc(e.matching_method)}</title></line>`;
+    if (p && q) {
+      const x1 = p[0].toFixed(1), y1 = p[1].toFixed(1);
+      const x2 = q[0].toFixed(1), y2 = q[1].toFixed(1);
+      const title = `${esc(e.relationship_type)} via ${esc(e.matching_method)}`;
+      s += `<line class="graph-edge-hit" data-c="${esc(e.correlation_id)}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="transparent" stroke-width="14" style="cursor:pointer;pointer-events:stroke"><title>Inspect ${title}</title></line>`;
+      s += `<line class="graph-edge" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#7c3aed" stroke-width="2.4" pointer-events="none"><title>${title}</title></line>`;
+    }
   });
   nodes.forEach(nd => {
     const [x, y] = pos[nd.id];
@@ -115,6 +134,36 @@ function renderGraphPreview() {
     else s += `<g data-a="${nd.id}" class="gnode"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="9" fill="${col(nd.type)}"><title>${esc(nd.type)}: ${esc(nd.label)}</title></circle><text x="${x.toFixed(1)}" y="${(y + 24).toFixed(1)}" text-anchor="middle">${esc((nd.type || '').slice(0, 10))}</text></g>`;
   });
   box.innerHTML = s + `</svg>`;
+  box.querySelectorAll('.graph-edge-hit').forEach(el => {
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('role', 'button');
+    el.setAttribute('aria-label', 'Inspect relationship');
+    el.addEventListener('click', () => {
+      const relationship = DB.graph.edges.find(
+        edge => edge.correlation_id === el.dataset.c
+      );
+      if (!relationship) return;
+
+      document.querySelector('[data-tab="corr"]').click();
+      $('nodeDetail').textContent =
+        `RELATIONSHIP ${relationship.relationship_type}\\n` +
+        `method: ${relationship.matching_method}\\n` +
+        `${relationship.explanation}\\n` +
+        `strength: ${relationship.strength}\\n` +
+        `limits: ${relationship.limitations}\\n` +
+        `supporting: ${JSON.stringify(relationship.supporting_fields)}\\n` +
+        `timestamps: ${JSON.stringify(relationship.timestamps)}\\n` +
+        `source: ${relationship.source_artifact_id}\\n` +
+        `target: ${relationship.target_artifact_id}`;
+    });
+    el.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      }
+    });
+  });
+
   box.querySelectorAll('.gnode').forEach(el => {
     el.style.cursor = 'pointer';
     el.setAttribute('tabindex', '0');
@@ -208,11 +257,74 @@ function renderAI() {
   $('aiFinding').innerHTML = DB.findings.map(f => `<option value="${f.finding_id}">${esc(f.rule_id)} [${esc(f.severity)}]</option>`).join('');
 }
 async function explain(payload) {
-  $('aiOut').textContent = 'Retrieving supporting evidence…';
-  const r = await fetch('/api/analysis/explain', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...payload, case_id: CASE_ID }) }).then(x => x.json());
-  $('aiBadge').textContent = 'AI: ' + r.mode;
-  $('aiOut').textContent = r.explanation + `\n\n--- citations ---\nevidence: ${(r.citations.evidence_ids || []).join(', ')}\nfindings: ${(r.citations.finding_ids || []).join(', ')}\nlimits: ${r.limits}` + (r.llm_text ? `\n\n--- LLM-grounded ---\n${r.llm_text}` : '\n\n(LLM unavailable — deterministic template used. Set AI_ENABLED=true + OPENAI_API_KEY to enable.)');
-  toast(`Explanation ready — cited ${(r.citations.evidence_ids || []).length} evidence items`, 'ok');
+  const out = $('aiOut');
+  out.textContent = 'Retrieving supporting evidence…';
+
+  try {
+    const response = await fetch('/api/analysis/explain', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...payload, case_id: CASE_ID })
+    });
+
+    if (!response.ok) throw new Error(`Request failed (${response.status})`);
+
+    const r = await response.json();
+    const citations = r.citations || {};
+    const evidence = citations.evidence_ids || [];
+    const findings = citations.finding_ids || [];
+
+    $('aiBadge').textContent = 'AI: ' + (r.mode || 'rule-based');
+
+    const audit = document.createElement('details');
+    audit.className = 'ai-audit';
+
+    const summary = document.createElement('summary');
+    summary.textContent = 'Evidence & Audit Details';
+    audit.appendChild(summary);
+
+    const details = document.createElement('div');
+    details.className = 'ai-audit-content';
+
+    const addSection = (label, value) => {
+      const heading = document.createElement('h4');
+      heading.textContent = label;
+      details.appendChild(heading);
+
+      const body = document.createElement('p');
+      body.textContent = value || 'None recorded';
+      details.appendChild(body);
+    };
+
+    addSection('Supporting evidence', evidence.join(', '));
+    addSection('Related findings', findings.join(', '));
+    addSection('Analysis limitations', r.limits || 'Not specified');
+
+    if (r.llm_text) {
+      addSection('Additional model analysis', r.llm_text);
+    } else {
+      addSection(
+        'Analysis mode',
+        'Deterministic template used. Optional LLM analysis is unavailable.'
+      );
+    }
+
+    audit.appendChild(details);
+
+    out.replaceChildren();
+
+    const explanation = document.createElement('div');
+    explanation.className = 'ai-explanation';
+    explanation.textContent = r.explanation || 'No explanation returned.';
+    out.appendChild(explanation);
+    out.appendChild(audit);
+
+    toast(`Explanation ready — cited ${evidence.length} evidence items`, 'ok');
+  } catch (error) {
+    out.textContent = 'Could not generate the explanation: ' + error.message;
+    toast('Explanation failed', 'error');
+  }
+
   document.querySelector('[data-tab="ai"]').click();
 }
 $('aiExplainBtn').onclick = () => explain({ finding_id: $('aiFinding').value });

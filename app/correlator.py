@@ -97,7 +97,11 @@ def correlate_artifacts(artifacts, window_seconds=300):
     return findings
 
 
-def correlate_events(events, window_seconds=300):
+def correlate_events(
+    events,
+    window_seconds=300,
+    include_temporal_only=False,
+):
     """Link events across evidence sources using shared identifiers and time."""
     findings = []
     seen = set()
@@ -147,12 +151,12 @@ def correlate_events(events, window_seconds=300):
 
             # Keep temporal matches even when no identifier is shared.
             # These are weaker leads and must be labeled accordingly.
-            has_strong_identifier = any(
-                s in signals for s in ("shared_session", "shared_source_ip")
-            )
+            has_shared_identifier = bool(signals)
+            if not has_shared_identifier and not include_temporal_only:
+                continue
             correlation_type = (
                 "cross_source_event_correlation"
-                if has_strong_identifier
+                if has_shared_identifier
                 else "temporal_proximity"
             )
 
@@ -178,18 +182,29 @@ def correlate_events(events, window_seconds=300):
                     "details": item.get("details", {}),
                 }
 
-            if has_strong_identifier:
+            if has_shared_identifier:
+                labels = {
+                    "shared_account": "account",
+                    "shared_session": "session",
+                    "shared_source_ip": "source IP",
+                }
+                matched = [
+                    labels[signal]
+                    for signal in signals
+                    if signal in labels
+                ]
                 description = (
-                    "Events from different evidence sources share a session "
-                    "or source IP and fall within the selected time window. "
+                    "Events from different evidence sources share "
+                    + ", ".join(matched)
+                    + " and fall within the selected time window. "
                     "This is an investigative lead, not proof of compromise."
                 )
             else:
                 description = (
                     "Events from different evidence sources occurred within "
-                    "the selected time window, but no shared session or source "
-                    "IP was identified. Time proximity alone is weak evidence "
-                    "and does not establish a relationship."
+                    "the selected time window, but no shared account, session, "
+                    "or source IP was identified. Time proximity alone is "
+                    "weak evidence and does not establish a relationship."
                 )
 
             findings.append({

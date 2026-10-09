@@ -8,7 +8,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 
-from app import correlator, detector, extractor, storage
+from app import correlator, detector, extractor, storage, investigator
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -268,6 +268,78 @@ def get_correlations(window_seconds: int = 300):
             "Correlations are investigative leads, not proof of "
             "compromise or causation."
         ),
+    }
+
+
+@app.get("/timeline")
+def get_timeline(window_seconds: int = 300):
+    """Return chronological events linked to evidence and correlations."""
+    if not 1 <= window_seconds <= 3600:
+        raise HTTPException(400, "window_seconds must be between 1 and 3600")
+
+    all_events = []
+
+    for record in storage.list_evidence():
+        evidence_id = record["evidence_id"]
+        verified, file_path = get_verified_evidence(evidence_id)
+        filename = verified["original_filename"]
+
+        for event in extractor.extract_events(
+            filename, file_path.read_bytes()
+        ):
+            item = dict(event)
+            item["evidence_id"] = evidence_id
+            item["source_type"] = filename
+
+            parsed = correlator.parse_timestamp(item.get("timestamp"))
+            if parsed is None:
+                continue
+            if parsed.tzinfo is not None:
+                parsed = parsed.astimezone(timezone.utc).replace(tzinfo=None)
+
+            item["_sort_time"] = parsed
+            all_events.append(item)
+
+    all_events.sort(key=lambda e: e["_sort_time"])
+
+    findings = correlator.correlate_events(
+        all_events, window_seconds=window_seconds
+    )
+
+    leads_by_event = {}
+    for index, finding in enumerate(findings, start=1):
+        lead_id = f"CORR-{index:03d}"
+        finding["correlation_id"] = lead_id
+
+        for event in finding.get("events", []):
+            key = (event.get("evidence_id"), event.get("line"))
+            leads_by_event.setdefault(key, []).append({
+                "correlation_id": lead_id,
+                "type": finding.get("type"),
+                "confidence": finding.get("confidence"),
+                "signals": finding.get("signals", []),
+                "description": finding.get("description"),
+            })
+
+    timeline = []
+    for event in all_events:
+        item = {
+            key: value for key, value in event.items()
+            if key != "_sort_time"
+        }
+        item["related_correlations"] = leads_by_event.get(
+            (event.get("evidence_id"), event.get("line")), []
+        )
+        timeline.append(item)
+
+    return {
+        "event_count": len(timeline),
+        "window_seconds": window_seconds,
+        "timeline": timeline,
+        "correlation_count": len(findings),
+        "correlations": findings,
+        "investigation": investigator.build_investigation(timeline),
+        "note": "Chronological order does not prove causation. Correlations are investigative leads.",
     }
 
 

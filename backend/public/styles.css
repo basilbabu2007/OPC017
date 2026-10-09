@@ -201,3 +201,30 @@ button:hover{filter:brightness(1.08);box-shadow:var(--glow)}button:active{transf
   .statusbar .dim{display:none}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.ai-audit {
+  margin-top: 16px;
+  border: 1px solid var(--border, #ddd);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.ai-audit summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.ai-audit-content {
+  padding-top: 10px;
+  overflow-wrap: anywhere;
+}
+
+.ai-audit-content h4 {
+  margin: 12px 0 4px;
+}
+
+.ai-audit-content p {
+  margin: 0;
+  white-space: pre-wrap;
+  color: var(--muted, #666);
+}
