@@ -265,3 +265,46 @@ def get_correlations(window_seconds: int = 300):
         "correlation_count": len(findings),
         "findings": findings,
     }
+
+
+@app.post("/analyze")
+async def analyze_upload(file: UploadFile = File(...)):
+    """Analyze an uploaded working copy without storing it in Python's evidence DB."""
+    if not file.filename:
+        raise HTTPException(400, "A filename is required")
+
+    filename = Path(file.filename).name
+    extension = Path(filename).suffix.lower()
+
+    if extension not in ALLOWED_EXTENSIONS:
+        raise HTTPException(400, "Unsupported evidence file type")
+
+    data = await file.read(MAX_FILE_SIZE + 1)
+    await file.close()
+
+    if len(data) > MAX_FILE_SIZE:
+        raise HTTPException(413, "File exceeds the 5 MiB limit")
+
+    if not data:
+        raise HTTPException(400, "Empty evidence files are not accepted")
+
+    artifacts = extractor.extract_artifacts(filename, data)
+
+    findings = []
+    if extension in SCANNABLE_EXTENSIONS:
+        text = data.decode("utf-8", errors="replace")
+        findings = detector.detect_sqli(text)
+
+    return {
+        "original_filename": filename,
+        "sha256": sha256_bytes(data),
+        "size_bytes": len(data),
+        "artifact_count": len(artifacts),
+        "artifacts": artifacts,
+        "findings_count": len(findings),
+        "findings": findings,
+        "note": (
+            "Pattern matches and temporal relationships are investigative "
+            "leads, not proof of malicious activity."
+        ),
+    }
