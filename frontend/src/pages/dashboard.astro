@@ -1,0 +1,192 @@
+---
+// OPC017 Forensics Dashboard — Astro frontend page.
+// Talks to the OPC017 backend (Node/Express) REST API.
+// Set PUBLIC_OPC_API in frontend/.env to point at the backend (default: http://localhost:4000).
+const apiBase = import.meta.env.PUBLIC_OPC_API || "http://localhost:4000";
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OPC017 · Forensics Dashboard</title>
+    <meta name="description" content="AI-Powered Digital Forensics Platform — investigation dashboard" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo">IQ</span>
+        <div>
+          <h1>OPC017 Forensics Dashboard</h1>
+          <p>AI-Powered Digital Forensics Platform</p>
+        </div>
+      </div>
+      <div class="status" id="health"><span class="dot"></span> Connecting…</div>
+    </header>
+
+    <main>
+      <section class="panel">
+        <h2>Cases</h2>
+        <div id="cases" class="cards"><p class="muted">Loading cases…</p></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Findings</h2>
+          <span id="active-case" class="chip">No case selected</span>
+        </div>
+        <div id="findings"><p class="muted">Select a case to load its findings.</p></div>
+      </section>
+    </main>
+
+    <footer>
+      <span>Backend API: <code id="api-base"></code></span>
+      <a id="legacy" href="#" target="_blank" rel="noopener">Open classic dashboard ↗</a>
+    </footer>
+
+    <style>
+      :root {
+        --bg: #0a0e1c;
+        --panel: #141a2e;
+        --card: #1a2138;
+        --border: #2c3555;
+        --cyan: #22d3ee;
+        --blue: #3b82f6;
+        --green: #34d399;
+        --amber: #f5b02e;
+        --red: #f86565;
+        --text: #e8ecf7;
+        --muted: #94a0b8;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: radial-gradient(1200px 600px at 80% -10%, #1b1245 0%, var(--bg) 55%);
+        color: var(--text);
+        font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        min-height: 100vh;
+      }
+      a { color: var(--cyan); text-decoration: none; }
+      .topbar {
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 1rem; padding: 1.1rem 1.6rem; border-bottom: 1px solid var(--border);
+        background: rgba(10, 14, 28, 0.7); backdrop-filter: blur(8px);
+        position: sticky; top: 0; z-index: 5;
+      }
+      .brand { display: flex; align-items: center; gap: 0.9rem; }
+      .logo {
+        width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center;
+        background: linear-gradient(135deg, var(--cyan), var(--blue));
+        color: #0a0e1c; font-weight: 800; font-size: 1.15rem;
+      }
+      .brand h1 { margin: 0; font-size: 1.2rem; }
+      .brand p { margin: 2px 0 0; font-size: 0.78rem; color: var(--muted); }
+      .status { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--muted); }
+      .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--muted); }
+      .status.ok .dot { background: var(--green); box-shadow: 0 0 10px var(--green); }
+      .status.bad .dot { background: var(--red); box-shadow: 0 0 10px var(--red); }
+      main { padding: 1.6rem; display: grid; gap: 1.4rem; max-width: 1200px; margin: 0 auto; }
+      .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 1.2rem 1.3rem; }
+      .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+      .panel h2 { margin: 0 0 0.9rem; font-size: 1.05rem; }
+      .panel-head h2 { margin: 0; }
+      .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0.8rem; }
+      .card {
+        background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+        padding: 0.9rem 1rem; cursor: pointer; transition: border-color 0.15s, transform 0.15s;
+      }
+      .card:hover { border-color: var(--cyan); transform: translateY(-2px); }
+      .card.active { border-color: var(--cyan); background: #20264a; }
+      .card .cid { color: var(--cyan); font-weight: 700; font-size: 0.8rem; }
+      .card .title { font-weight: 600; margin: 0.25rem 0 0.35rem; }
+      .card .meta { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+      .finding { border-left: 3px solid var(--amber); background: var(--card); border-radius: 8px; padding: 0.7rem 0.9rem; margin-bottom: 0.6rem; }
+      .finding .sev { font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; }
+      .sev.low { color: var(--green); } .sev.medium { color: var(--amber); }
+      .sev.high { color: var(--red); } .sev.critical { color: var(--red); }
+      .finding .rule { font-size: 0.8rem; color: var(--cyan); }
+      .finding .reason { font-size: 0.86rem; margin: 0.3rem 0 0; }
+      .chip { font-size: 0.78rem; border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px; color: var(--muted); }
+      .muted { color: var(--muted); }
+      footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.6rem; padding: 1rem 1.6rem 2rem; color: var(--muted); font-size: 0.82rem; }
+      code { color: var(--cyan); }
+      .error { color: var(--red); font-size: 0.85rem; }
+    </style>
+
+    <script define:vars={{ apiBase }}>
+      const API = apiBase;
+      document.getElementById("api-base").textContent = API;
+      document.getElementById("legacy").href = API + "/";
+
+      const healthEl = document.getElementById("health");
+      const casesEl = document.getElementById("cases");
+      const findingsEl = document.getElementById("findings");
+      const activeEl = document.getElementById("active-case");
+
+      async function getJSON(path) {
+        const res = await fetch(API + path);
+        if (!res.ok) throw new Error(res.status + " " + res.statusText);
+        return res.json();
+      }
+
+      (async function init() {
+        try {
+          const h = await getJSON("/api/health");
+          healthEl.className = "status ok";
+          healthEl.innerHTML = '<span class="dot"></span> Online · ' + h.cases + " case(s)";
+        } catch (e) {
+          healthEl.className = "status bad";
+          healthEl.innerHTML = '<span class="dot"></span> Backend offline';
+        }
+
+        try {
+          const cases = await getJSON("/api/analysis/cases");
+          if (!cases.length) {
+            casesEl.innerHTML = '<p class="muted">No cases found. Seed demo data: <code>node src/seed.js</code> in backend/.</p>';
+            return;
+          }
+          casesEl.innerHTML = "";
+          cases.forEach((c) => {
+            const el = document.createElement("div");
+            el.className = "card";
+            el.innerHTML =
+              '<div class="cid">' + c.case_id + "</div>" +
+              '<div class="title">' + c.title + "</div>" +
+              '<div class="meta">' + (c.incident_type || "unknown") + " · " + (c.status || "") + "</div>";
+            el.addEventListener("click", () => selectCase(c, el));
+            casesEl.appendChild(el);
+          });
+        } catch (e) {
+          casesEl.innerHTML = '<p class="error">Could not load cases: ' + e.message + "</p>";
+        }
+      })();
+
+      async function selectCase(c, el) {
+        document.querySelectorAll(".card").forEach((n) => n.classList.remove("active"));
+        el.classList.add("active");
+        activeEl.textContent = c.case_id;
+        findingsEl.innerHTML = '<p class="muted">Loading findings…</p>';
+        try {
+          const findings = await getJSON("/api/analysis/findings?case_id=" + encodeURIComponent(c.case_id));
+          if (!findings.length) {
+            findingsEl.innerHTML = '<p class="muted">No findings for this case.</p>';
+            return;
+          }
+          findingsEl.innerHTML = "";
+          findings.forEach((f) => {
+            const sev = (f.severity || "low").toLowerCase();
+            const div = document.createElement("div");
+            div.className = "finding";
+            div.innerHTML =
+              '<div class="sev ' + sev + '">' + sev + " · <span class=\"rule\">" + f.rule_id + "</span></div>" +
+              '<p class="reason">' + (f.reason || "") + "</p>";
+            findingsEl.appendChild(div);
+          });
+        } catch (e) {
+          findingsEl.innerHTML = '<p class="error">Could not load findings: ' + e.message + "</p>";
+        }
+      }
+    </script>
+  </body>
+</html>
