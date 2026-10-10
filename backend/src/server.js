@@ -27,6 +27,31 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true, service: 'opc017-backend', cases: row.c, timeUtc: new Date().toISOString() });
 });
 
+// Forward dashboard questions to the Python investigation API.
+app.post('/api/assistant/ask', async (req, res) => {
+  try {
+    const response = await fetch(
+      `${process.env.PYTHON_API_URL || 'http://127.0.0.1:8000'}/ask`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(req.body),
+        signal: AbortSignal.timeout(120000)
+      }
+    );
+
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch (error) {
+    console.error('Python investigation API error:', error.message);
+
+    res.status(502).json({
+      error: 'investigation-api-unavailable',
+      message: 'Could not reach the Python investigation service. Check that it is running.'
+    });
+  }
+});
+
 app.use('/api/auth', authRouter);
 app.use('/api/cases', authRequired, casesRouter);
 app.use('/api/evidence', authRequired, evidenceRouter);

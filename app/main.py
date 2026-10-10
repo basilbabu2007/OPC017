@@ -6,9 +6,11 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
+from app.answer_validator import validate_answer
 from fastapi import FastAPI, File, HTTPException, UploadFile
+from pydantic import BaseModel, Field
 
-from app import correlator, detector, extractor, storage, investigator
+from app import correlator, detector, extractor, storage, investigator, llm
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,6 +24,11 @@ EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
 storage.initialize_db()
 
 app = FastAPI(title="OPC017 Forensics Platform")
+
+
+class AskRequest(BaseModel):
+    question: str = Field(min_length=1, max_length=1000)
+    finding_index: int | None = Field(default=None, ge=0)
 
 
 def sha256_bytes(data: bytes) -> str:
@@ -247,9 +254,11 @@ def get_correlations(window_seconds: int = 300):
         artifacts_analyzed += len(artifacts)
 
         events = extractor.extract_events(filename, data)
+
         for event in events:
             event["evidence_id"] = evidence_id
             event["source_type"] = filename
+
         all_events.extend(events)
 
     findings = correlator.correlate_events(
@@ -275,7 +284,10 @@ def get_correlations(window_seconds: int = 300):
 def get_timeline(window_seconds: int = 300):
     """Return chronological events linked to evidence and correlations."""
     if not 1 <= window_seconds <= 3600:
-        raise HTTPException(400, "window_seconds must be between 1 and 3600")
+        raise HTTPException(
+            400,
+            "window_seconds must be between 1 and 3600",
+        )
 
     all_events = []
 
@@ -285,34 +297,42 @@ def get_timeline(window_seconds: int = 300):
         filename = verified["original_filename"]
 
         for event in extractor.extract_events(
-            filename, file_path.read_bytes()
+            filename,
+            file_path.read_bytes(),
         ):
             item = dict(event)
             item["evidence_id"] = evidence_id
             item["source_type"] = filename
 
             parsed = correlator.parse_timestamp(item.get("timestamp"))
+
             if parsed is None:
                 continue
+
             if parsed.tzinfo is not None:
-                parsed = parsed.astimezone(timezone.utc).replace(tzinfo=None)
+                parsed = parsed.astimezone(timezone.utc).replace(
+                    tzinfo=None
+                )
 
             item["_sort_time"] = parsed
             all_events.append(item)
 
-    all_events.sort(key=lambda e: e["_sort_time"])
+    all_events.sort(key=lambda event: event["_sort_time"])
 
     findings = correlator.correlate_events(
-        all_events, window_seconds=window_seconds
+        all_events,
+        window_seconds=window_seconds,
     )
 
     leads_by_event = {}
+
     for index, finding in enumerate(findings, start=1):
         lead_id = f"CORR-{index:03d}"
         finding["correlation_id"] = lead_id
 
         for event in finding.get("events", []):
             key = (event.get("evidence_id"), event.get("line"))
+
             leads_by_event.setdefault(key, []).append({
                 "correlation_id": lead_id,
                 "type": finding.get("type"),
@@ -322,14 +342,19 @@ def get_timeline(window_seconds: int = 300):
             })
 
     timeline = []
+
     for event in all_events:
         item = {
-            key: value for key, value in event.items()
+            key: value
+            for key, value in event.items()
             if key != "_sort_time"
         }
+
         item["related_correlations"] = leads_by_event.get(
-            (event.get("evidence_id"), event.get("line")), []
+            (event.get("evidence_id"), event.get("line")),
+            [],
         )
+
         timeline.append(item)
 
     return {
@@ -338,14 +363,156 @@ def get_timeline(window_seconds: int = 300):
         "timeline": timeline,
         "correlation_count": len(findings),
         "correlations": findings,
-        "investigation": investigator.build_investigation(timeline),
-        "note": "Chronological order does not prove causation. Correlations are investigative leads.",
+        "investigation": investigator.run_investigation(timeline),
+        "note": (
+            "Chronological order does not prove causation. "
+            "Correlations are investigative leads."
+        ),
+    }
+
+
+@app.post("/ask")
+def ask_investigation(request: AskRequest):
+    """Answer a question using verified investigation results."""
+    data = get_timeline(window_seconds=300)
+    report = data["investigation"]
+    observations = report["observations"]
+
+    if request.finding_index is not None:
+        if request.finding_index >= len(observations):
+            raise HTTPException(
+                404,
+                "Investigation finding not found",
+            )
+
+        selected = observations[request.finding_index]
+
+        context = {
+            "finding": selected,
+            "supporting_events": selected.get("supporting_events", []),
+            "all_timeline_events": [
+                {
+                    **event,
+                    "event_number": number,
+                }
+                for number, event in enumerate(data.get("timeline", []), start=1)
+            ],
+            "instructions": (
+                "Explain the selected finding using its supporting events. "
+                "Use all_timeline_events to identify relevant surrounding events. "
+                "Every timeline event has an authoritative event_number; use it "
+                "when referring to that event. Distinguish supporting events from "
+                "other timeline events. Do not invent facts or identifiers."
+            ),
+        }
+        source_observations = [selected]
+
+    else:
+        context = {
+            "observations": [
+                {
+                    "rule_id": item.get("rule_id"),
+                    "title": item.get("title"),
+                    "explanation": item.get("explanation"),
+                    "limitations": item.get("limitations"),
+                    "review_priority": item.get("review_priority"),
+                    "supporting_events": item.get("supporting_events", []),
+                    "evidence_refs": [
+                        {
+                            "evidence_id": event.get("evidence_id"),
+                            "line": event.get("line"),
+                            "timestamp": event.get("timestamp"),
+                            "event_type": event.get(
+                                "event_type",
+                                event.get("event"),
+                            ),
+                            "user": event.get("user"),
+                            "source_ip": event.get(
+                                "source_ip",
+                                event.get("ip"),
+                            ),
+                        }
+                        for event in item.get("supporting_events", [])
+                    ],
+                    "recommended_actions": item.get(
+                        "recommended_actions", []
+                    ),
+                }
+                for item in observations
+            ],
+            "next_actions": report.get("next_actions", []),
+            "note": (
+                "Only these observations and event references are supplied. "
+                "Do not invent missing event numbers, line numbers, timestamps, "
+                "accounts, IP addresses, or evidence references."
+            ),
+        }
+        source_observations = observations
+
+    # Build authoritative evidence references outside the LLM.
+    event_numbers = {
+        (event.get("evidence_id"), event.get("line")): number
+        for number, event in enumerate(data["timeline"], start=1)
+    }
+
+    verified_evidence = []
+
+    for item in source_observations:
+        verified_events = []
+
+        for event in item.get("supporting_events", []):
+            evidence_id = event.get("evidence_id")
+            line = event.get("line")
+
+            verified_events.append({
+                "event_number": event_numbers.get((evidence_id, line)),
+                "evidence_id": evidence_id,
+                "source_type": event.get("source_type"),
+                "line": line,
+                "timestamp": event.get("timestamp"),
+                "event": event.get("event"),
+                "user": event.get("user"),
+                "source_ip": event.get("source_ip", event.get("ip")),
+            })
+
+        verified_evidence.append({
+            "rule_id": item.get("rule_id"),
+            "title": item.get("title"),
+            "events": verified_events,
+        })
+
+    try:
+        answer = llm.ask_llm(request.question, context)
+        validation = validate_answer(answer, verified_evidence)
+    except Exception as exc:
+        # Avoid logging API keys or other secret configuration.
+        print(f"LLM request failed: {type(exc).__name__}")
+        raise HTTPException(
+            502,
+            "The LLM service failed. Check the server configuration and logs.",
+        )
+
+    # Validate identifiers in the AI answer against verified references.
+    validation = validate_answer(answer, verified_evidence)
+
+    return {
+        "question": request.question,
+        "finding_index": request.finding_index,
+        "answer": answer,
+        "verified_evidence": verified_evidence,
+        "validation": validation,
+        "note": (
+            "AI explanations are based on available investigation results. "
+            "Validation checks selected evidence identifiers, IP addresses, "
+            "and timestamps; it does not establish that the AI's interpretation "
+            "is correct. Validate conclusions against the original evidence."
+        ),
     }
 
 
 @app.post("/analyze")
 async def analyze_upload(file: UploadFile = File(...)):
-    """Analyze an uploaded working copy without storing it in Python's evidence DB."""
+    """Analyze an uploaded working copy without storing it in the evidence DB."""
     if not file.filename:
         raise HTTPException(400, "A filename is required")
 
@@ -367,6 +534,7 @@ async def analyze_upload(file: UploadFile = File(...)):
     artifacts = extractor.extract_artifacts(filename, data)
 
     findings = []
+
     if extension in SCANNABLE_EXTENSIONS:
         text = data.decode("utf-8", errors="replace")
         findings = detector.detect_sqli(text)

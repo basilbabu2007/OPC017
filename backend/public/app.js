@@ -328,7 +328,104 @@ async function explain(payload) {
   document.querySelector('[data-tab="ai"]').click();
 }
 $('aiExplainBtn').onclick = () => explain({ finding_id: $('aiFinding').value });
-$('aiAskBtn').onclick = () => explain({ question: $('aiQ').value });
+async function askAssistant() {
+  const question = $('aiQ').value.trim();
+  const out = $('aiOut');
+
+  if (!question) {
+    toast('Enter a question first', 'error');
+    return;
+  }
+
+  out.textContent = 'Investigating stored evidence…';
+  $('aiAskBtn').disabled = true;
+
+  try {
+    const response = await fetch('/api/assistant/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || `Request failed (${response.status})`);
+    }
+
+    out.replaceChildren();
+
+    const answer = document.createElement('div');
+    answer.className = 'ai-explanation';
+    answer.textContent = data.answer || 'No answer returned.';
+    out.appendChild(answer);
+
+    const audit = document.createElement('details');
+    audit.className = 'ai-audit';
+
+    const summary = document.createElement('summary');
+    summary.textContent = 'Verified Evidence & Validation';
+    audit.appendChild(summary);
+
+    const content = document.createElement('div');
+    content.className = 'ai-audit-content';
+
+    const validation = document.createElement('p');
+    validation.textContent =
+      `Answer validation: ${data.validation?.passed ? 'Passed' : 'Review required'}`;
+    content.appendChild(validation);
+
+    const heading = document.createElement('h4');
+    heading.textContent = 'Evidence supplied to the investigation';
+    content.appendChild(heading);
+
+    const list = document.createElement('ul');
+
+    for (const item of (data.verified_evidence || [])) {
+      const li = document.createElement('li');
+      const events = (item.events || []).map(event =>
+        `Event ${event.event_number}: ${event.timestamp || 'No timestamp'} — ` +
+        `${event.event || 'No event description'} ` +
+        `(Evidence ID: ${event.evidence_id || item.evidence_id || 'Not recorded'})`
+      );
+
+      li.textContent =
+        `${item.rule_id || item.title || 'Evidence'}: ` +
+        (events.join(' | ') || 'No event details returned.');
+
+      list.appendChild(li);
+    }
+
+    if (!list.children.length) {
+      const li = document.createElement('li');
+      li.textContent = 'No structured evidence returned.';
+      list.appendChild(li);
+    }
+
+    content.appendChild(list);
+
+    const note = document.createElement('p');
+    note.textContent =
+      data.note || 'Verify important conclusions against the original evidence.';
+    content.appendChild(note);
+
+    audit.appendChild(content);
+    out.appendChild(audit);
+
+    if ($('aiBadge')) {
+      $('aiBadge').textContent = 'AI: Python investigation API';
+    }
+
+    toast('Investigation answer received', 'ok');
+  } catch (error) {
+    out.textContent = 'Could not complete the investigation: ' + error.message;
+    toast('Investigation failed', 'error');
+  } finally {
+    $('aiAskBtn').disabled = false;
+  }
+}
+
+$('aiAskBtn').onclick = askAssistant;
 
 // --- Tamper-evident vault ---
 async function renderVault() {
