@@ -1,0 +1,39 @@
+{
+  "site": {
+    "title": "ForensIQ",
+    "base_url": "https://automark-astro.vercel.app",
+    "base_path": "/",
+    "trailing_slash": false,
+    "favicon": "/images/favicon.png",
+    "logo": "/images/logo.svg",
+    "logo_width": "160",
+    "logo_height": "45",
+    "logo_text": "ForensIQ"
+  },
+  "settings": {
+    "sticky_header": true
+  },
+  "params": {
+    "contact_form_action": "#",
+    "checklist_form_action": "#",
+    "apply_form_action": "#",
+    "copyright": "Copyright &copy; 2026 <strong>ForensIQ</strong> All Rights Reserved",
+    "footer_tagline": "AI-assisted digital forensic investigation—from evidence collection to court-ready reporting.",
+    "footer_email": "contact@forensiq.com",
+    "footer_phone": "(+1) 165-320-0102"
+  },
+  "navigation_button": {
+    "enable": true,
+    "label": "Launch Demo",
+    "link": "/demo"
+  },
+  "google_tag_manager": {
+    "enable": false,
+    "gtm_id": "GTM-XXXXXX"
+  },
+  "metadata": {
+    "meta_author": "ForensIQ",
+    "meta_image": "/images/og-image.png",
+    "meta_description": "AI-assisted digital forensic investigation system for automated evidence collection, analysis, and preservation."
+  }
+}

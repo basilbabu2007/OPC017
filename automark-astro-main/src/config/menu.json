@@ -1,0 +1,45 @@
+{
+  "main": [
+    {
+      "name": "Contact",
+      "url": "/contact"
+    }
+  ],
+  "footer_col_1_title": "Primary",
+  "footer_col_2_title": "Resource",
+  "footer_col_3_title": "Legal",
+  "footer_primary": [
+    {
+      "name": "Home",
+      "url": "/"
+    },
+    {
+      "name": "About Us",
+      "url": "/about"
+    },
+    {
+      "name": "Contact",
+      "url": "/contact"
+    }
+  ],
+  "footer_resource": [
+    {
+      "name": "Elements",
+      "url": "/elements"
+    },
+    {
+      "name": "Careers",
+      "url": "/careers"
+    }
+  ],
+  "footer_legal": [
+    {
+      "name": "Privacy Policy",
+      "url": "/privacy-policy"
+    },
+    {
+      "name": "Terms and Conditions",
+      "url": "/term-and-condition"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+---
+enable: true
+badge: ""
+title: "The 5 Stages of Every <strong>Digital Investigation</strong>"
+items:
+  - image: "/images/brands-group-1.png"
+    number: "01"
+    title: "COLLECT"
+    content: "Securely acquire files, logs, messages, browser history, and metadata from computers, smartphones, and cloud platforms."
+  - image: "/images/brands-group-2.png"
+    number: "02"
+    title: "PRESERVE"
+    content: "Record hashes, timestamps, and handling history so every artifact stays tamper-evident and admissible."
+  - image: "/images/brands-group-3.png"
+    number: "03"
+    title: "ANALYZE"
+    content: "Detect suspicious activity, malicious links, unusual logins, unauthorized access, and malware indicators with AI-assisted analysis."
+  - image: "/images/brands-group-4.png"
+    number: "04"
+    title: "RECOVER"
+    content: "Identify and recover relevant deleted files, messages, and hidden artifacts, then correlate them across sources."
+  - image: "/images/brands-group-5.png"
+    number: "05"
+    title: "REPORT"
+    content: "Generate structured forensic reports that explain what happened, when, and the evidence that supports it."
+---

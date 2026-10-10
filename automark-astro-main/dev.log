@@ -1,0 +1,560 @@
+$ concurrently "node scripts/themeGenerator.js --watch" "astro dev"
+[0] ✅ Theme CSS generated successfully at: C:\Users\hp\Desktop\automark-astro-main\src\styles\generated-theme.css
+[0] 👁️  Watching for changes to: C:\Users\hp\Desktop\automark-astro-main\src\config\theme.json
+[1] [astro] `markdown.remarkPlugins`, `markdown.rehypePlugins`, and `markdown.remarkRehype` are deprecated. Pass them to `unified({...})` from `@astrojs/markdown-remark` directly instead.
+[1] [2m20:54:58[22m [34m[vite][39m connected.
+[1] [2m20:55:02[22m [34m[types][39m Generated [2m5ms[22m
+[1] [2m20:55:02[22m [34m[vite][39m connected.
+[1] [2m20:55:04[22m [34m[content][39m Syncing content
+[1] [2m20:55:05[22m [34m[content][39m Synced content
+[1] 
+[1] [43m[30m update [39m[49m [33m▶ New version of Astro available: 7.3.8[39m
+[1]   Run [36mpnpm dlx @astrojs/upgrade[39m to update
+[1] 
+[1] [2m20:55:07[22m [34m[vite][39m Re-optimizing dependencies because vite config has changed
+[1] [42m[1m astro [22m[49m [32mv7.0.3[39m [2mready in[22m 12053 [2mms[22m
+[1] [2m┃[22m Local    [36mhttp://localhost:4321/[39m
+[1] [2m┃[22m Network  [2muse --host to expose[22m
+[1] [2m20:55:07[22m [32mwatching for file changes...[39m
+[1] [2m20:55:08[22m [34m[vite][39m [optimizer] bundling dependencies...
+[1] [2m20:55:32[22m [34m[200][39m / [2m8408ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m20:58:38[22m [34m[vite][39m program reload
+[1] [31m[1m20:58:38[22m [ERROR] [vite][39m An error happened during full reload
+[1] Failed to load url astro:server-app.js (resolved id: astro:server-app.js). Does the file exist?
+[1] Error: Failed to load url astro:server-app.js (resolved id: astro:server-app.js). Does the file exist?
+[1]     at loadAndTransform (file:///C:/Users/hp/Desktop/automark-astro-main/node_modules/.pnpm/vite@8.1.0_@types+node@26.0_72f7b2b51f60e92971999382feb51a5e/node_modules/vite/dist/node/chunks/node.js:19714:31)
+[1] [2m20:58:47[22m [34m[200][39m / [2m215ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m20:58:48[22m [34m[200][39m / [2m64ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m20:58:50[22m [34m[200][39m / [2m94ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 20:58:52.239: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 20:58:52.241: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/logo.svg?origWidth=220&origHeight=50&origFormat=svg". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m20:58:52[22m [34m[200][39m /_image [2m226ms[22m
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/logo.svg?origWidth=220&origHeight=50&origFormat=svg". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m20:58:52[22m [34m[200][39m /_image [2m228ms[22m
+[1] [2m20:58:52[22m [34m[200][39m /_image [2m47ms[22m
+[1] [2m20:58:52[22m [34m[200][39m /_image [2m47ms[22m
+[1] [2m20:58:52[22m [34m[200][39m /_image [2m49ms[22m
+[1] [2m20:58:52[22m [34m[200][39m /_image [2m47ms[22m
+[1] [2m20:58:52[22m [34m[200][39m /_image [2m3ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 20:58:52.894: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/brands-group-1.png?origWidth=378&origHeight=173&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m20:58:52[22m [34m[200][39m /_image [2m6ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 20:58:52.947: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/brands-group-2.png?origWidth=365&origHeight=176&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m20:58:52[22m [34m[200][39m /_image [2m12ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 20:58:53.016: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/brands-group-3.png?origWidth=303&origHeight=158&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m6ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 20:58:53.084: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/brands-group-4.png?origWidth=260&origHeight=163&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m17ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 20:58:53.145: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/brands-group-5.png?origWidth=207&origHeight=154&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m7ms[22m
+[1] (node:22028) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 close listeners added to [Socket]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+[1] (Use `node --trace-warnings ...` to show where the warning was created)
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m7ms[22m
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m6ms[22m
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m7ms[22m
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m10ms[22m
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m5ms[22m
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m2ms[22m
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m14ms[22m
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m14ms[22m
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m16ms[22m
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m14ms[22m
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m10ms[22m
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m10ms[22m
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m11ms[22m
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m11ms[22m
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m10ms[22m
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m10ms[22m
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m3ms[22m
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m3ms[22m
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m7ms[22m
+[1] [2m20:58:53[22m [34m[200][39m /_image [2m4ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 20:59:02.412: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/avatar.png?origWidth=800&origHeight=800&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m20:59:02[22m [34m[200][39m /_image [2m21ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 20:59:21.432: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/avatar-lg.png?origWidth=800&origHeight=800&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m20:59:21[22m [34m[200][39m /_image [2m26ms[22m
+[1] (node:22028) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 close listeners added to [Socket]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+[1] (node:22028) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 close listeners added to [Socket]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 20:59:22.400: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/integrations/snapchat.png?origWidth=92&origHeight=85&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 20:59:22.400: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 20:59:22.400: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] [2m20:59:22[22m [34m[200][39m /_image [2m19ms[22m
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/integrations/airtable.png?origWidth=95&origHeight=95&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m20:59:22[22m [34m[200][39m /_image [2m15ms[22m
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/integrations/fastapi.png?origWidth=86&origHeight=86&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m20:59:22[22m [34m[200][39m /_image [2m19ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 20:59:22.400: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 20:59:22.400: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 20:59:22.400: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/integrations/youtube.png?origWidth=73&origHeight=50&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m20:59:22[22m [34m[200][39m /_image [2m19ms[22m
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/integrations/zendesk.png?origWidth=83&origHeight=63&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m20:59:22[22m [34m[200][39m /_image [2m16ms[22m
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/integrations/slack.png?origWidth=83&origHeight=83&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m20:59:22[22m [34m[200][39m /_image [2m15ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 20:59:22.427: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/integrations/mailchimp.png?origWidth=95&origHeight=103&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 20:59:22.428: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] [2m20:59:22[22m [34m[200][39m /_image [2m4ms[22m
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/integrations/asana.png?origWidth=86&origHeight=81&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m20:59:22[22m [34m[200][39m /_image [2m4ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 20:59:22.784: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/ebook.png?origWidth=461&origHeight=285&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m20:59:22[22m [34m[200][39m /_image [2m10ms[22m
+[1] [2m21:01:43[22m [34m[200][39m / [2m89ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m21:06:49[22m [34m[200][39m / [2m59ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m21:09:05[22m [34m[vite][39m program reload
+[1] [2m21:09:06[22m [34m[glob-loader][39m Reloaded data from [32mcomparison-row.md[39m
+[1] [2m21:09:07[22m [34m[200][39m / [2m351ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m21:09:07[22m [34m[200][39m / [2m64ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m21:09:15[22m [34m[200][39m / [2m29ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m21:10:31[22m [34m[200][39m / [2m31ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m22:05:54[22m [34m[200][39m / [2m37ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m22:05:55[22m [34m[200][39m / [2m39ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m22:06:04[22m [34m[200][39m /contact [2m116ms[22m
+[1] [2m22:06:06[22m [34m[200][39m /_image [2m6ms[22m
+[1] [2m22:08:22[22m [34m[vite][39m program reload
+[1] [2m22:08:22[22m [34m[glob-loader][39m Reloaded data from [32mour-story.md[39m
+[1] [2m22:08:22[22m [34m[glob-loader][39m Reloaded data from [32mour-story.md[39m
+[1] [2m22:08:23[22m [34m[vite][39m program reload
+[1] [2m22:08:28[22m [34m[vite][39m program reload
+[1] [2m22:08:28[22m [34m[glob-loader][39m Reloaded data from [32m-index.md[39m
+[1] [2m22:08:28[22m [34m[glob-loader][39m Reloaded data from [32m-index.md[39m
+[1] [2m22:08:29[22m [34m[vite][39m program reload
+[1] [2m22:08:38[22m [34m[vite][39m program reload
+[1] [2m22:08:38[22m [34m[glob-loader][39m Reloaded data from [32m-index.md[39m
+[1] [2m22:08:48[22m [34m[200][39m / [2m257ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m22:35:39[22m [34m[200][39m / [2m37ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m22:37:36[22m [34m[vite][39m program reload
+[1] [2m22:37:37[22m [34m[glob-loader][39m Reloaded data from [32m-index.md[39m
+[1] [2m22:37:37[22m [34m[200][39m / [2m164ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m22:37:38[22m [34m[200][39m / [2m104ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m22:37:50[22m [34m[200][39m / [2m27ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m22:38:02[22m [34m[200][39m / [2m15ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m22:38:16[22m [34m[watch][39m /src/styles/main.css
+[1] [2m22:38:17[22m [34m[200][39m / [2m283ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m22:38:29[22m [34m[200][39m / [2m20ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m22:39:19[22m [34m[200][39m / [2m25ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m22:48:08[22m [34m[vite][39m program reload
+[1] [2m22:48:08[22m [34m[glob-loader][39m Reloaded data from [32m-index.md[39m
+[1] [2m22:48:09[22m [34m[200][39m / [2m217ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m22:48:10[22m [34m[200][39m / [2m123ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [31m[1m22:48:10[22m [ERROR] [vite][39m [2m[console.error] [22mAstro Error while running audit's match function: TypeError: Failed to fetch
+[1] [2m22:48:22[22m [34m[200][39m / [2m17ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m22:49:27[22m [34m[200][39m / [2m26ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m22:51:31[22m [34m[vite][39m program reload
+[1] [2m22:51:31[22m [34m[glob-loader][39m Reloaded data from [32m-index.md[39m
+[1] [2m22:51:32[22m [34m[200][39m / [2m248ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m22:51:33[22m [34m[200][39m / [2m126ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m22:51:40[22m [34m[200][39m / [2m18ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m22:56:10[22m [34m[vite][39m program reload
+[1] [2m22:56:10[22m [34m[glob-loader][39m Reloaded data from [32mbrands.md[39m
+[1] [2m22:56:11[22m [34m[200][39m / [2m209ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m22:56:12[22m [34m[200][39m / [2m152ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m22:56:24[22m [34m[200][39m / [2m21ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m23:02:00[22m [34m[200][39m /contact [2m111ms[22m
+[1] [2m23:10:10[22m [34m[vite][39m program reload
+[1] [2m23:10:11[22m [34m[glob-loader][39m Reloaded data from [32m-index.md[39m
+[1] [2m23:10:24[22m [34m[200][39m / [2m252ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m23:10:37[22m [34m[200][39m / [2m22ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m23:11:18[22m [34m[200][39m / [2m31ms[22m
+[1] Video URL: /showcase.mp4
+[1] Video URL: /showcase.mp4
+[1] Video URL: undefined
+[1] [2m23:15:19[22m [34m[watch][39m /src/styles/main.css
+[1] [2m23:15:20[22m [34m[200][39m / [2m252ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 23:15:21.254: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/testimonials/1.png?origWidth=800&origHeight=603&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m23:15:21[22m [34m[200][39m /_image [2m30ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 23:15:21.291: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/testimonials/2.png?origWidth=800&origHeight=603&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m23:15:21[22m [34m[200][39m /_image [2m17ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 23:15:21.306: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/testimonials/3.png?origWidth=800&origHeight=603&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m23:15:21[22m [34m[200][39m /_image [2m23ms[22m
+[1] [2m23:15:31[22m [34m[vite][39m program reload
+[1] [2m23:15:32[22m [34m[glob-loader][39m Reloaded data from [32mtestimonial.md[39m
+[1] [2m23:15:32[22m [34m[200][39m / [2m154ms[22m
+[1] [2m23:15:33[22m [34m[200][39m / [2m109ms[22m
+[1] [2m23:15:36[22m [34m[vite][39m program reload
+[1] [2m23:15:37[22m [34m[glob-loader][39m Reloaded data from [32mtestimonial.md[39m
+[1] [2m23:15:37[22m [34m[glob-loader][39m Reloaded data from [32mtestimonial.md[39m
+[1] [2m23:15:37[22m [34m[vite][39m program reload
+[1] [2m23:15:38[22m [34m[200][39m / [2m693ms[22m
+[1] [2m23:15:49[22m [34m[200][39m / [2m85ms[22m
+[1] [2m23:16:00[22m [34m[200][39m / [2m19ms[22m
+[1] [2m23:24:59[22m [34m[200][39m /contact [2m74ms[22m
+[1] [2m23:25:33[22m [34m[200][39m /features [2m245ms[22m
+[1] [2m23:25:38[22m [34m[200][39m /features [2m73ms[22m
+[1] [2m23:25:38[22m [34m[200][39m /pricing [2m129ms[22m
+[1] [2m23:25:49[22m [34m[200][39m /contact [2m25ms[22m
+[1] [2m23:25:49[22m [34m[200][39m / [2m27ms[22m
+[1] [2m23:25:49[22m [34m[200][39m /blog [2m247ms[22m
+[1] [2m23:25:50[22m [34m[200][39m /integrations [2m243ms[22m
+[1] [2m23:25:50[22m [34m[200][39m /case-study [2m264ms[22m
+[1] [2m23:25:51[22m [34m[200][39m /features [2m39ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 23:25:51.844: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/automark_dashboard.png?origWidth=1200&origHeight=887&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m23:25:51[22m [34m[200][39m /_image [2m14ms[22m
+[1] [2m23:25:53[22m [34m[200][39m /_image [2m4ms[22m
+[1] [2m23:25:53[22m [34m[200][39m /_image [2m6ms[22m
+[1] [2m23:25:53[22m [34m[200][39m /_image [2m3ms[22m
+[1] [2m23:25:55[22m [34m[200][39m /_image [2m4ms[22m
+[1] [2m23:25:56[22m [34m[200][39m /_image [2m268ms[22m
+[1] [2m23:25:58[22m [34m[200][39m /_image [2m5ms[22m
+[1] [2m23:26:00[22m [34m[200][39m /_image [2m62ms[22m
+[1] [2m23:26:15[22m [34m[200][39m /pricing [2m19ms[22m
+[1] [2m23:27:30[22m [34m[vite][39m program reload
+[0] ✅ Theme CSS generated successfully at: C:\Users\hp\Desktop\automark-astro-main\src\styles\generated-theme.css
+[1] [2m23:27:32[22m [34m[vite][39m program reload
+[1] [2m23:27:33[22m [34m[200][39m /integrations [2m860ms[22m
+[1] [2m23:27:33[22m [34m[200][39m /pricing [2m928ms[22m
+[1] [2m23:27:33[22m [34m[200][39m /pricing [2m928ms[22m
+[1] [2m23:27:53[22m [34m[200][39m /contact [2m99ms[22m
+[1] [2m23:27:59[22m [34m[watch][39m /src/styles/main.css
+[1] [2m23:28:00[22m [34m[200][39m /case-study [2m247ms[22m
+[1] [2m23:28:00[22m [34m[200][39m /contact [2m412ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 23:28:00.808: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] [2m23:28:00[22m [34m[200][39m /_image [2m42ms[22m
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/case-study-hero.png?origWidth=1290&origHeight=520&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m23:28:00[22m [34m[200][39m /_image [2m125ms[22m
+[1] [2m23:28:00[22m [34m[200][39m /_image [2m155ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 23:28:00.963: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/case-study-hero-2.png?origWidth=800&origHeight=322&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m23:28:00[22m [34m[200][39m /_image [2m37ms[22m
+[1] [2m23:28:16[22m [34m[watch][39m /src/styles/main.css
+[1] [2m23:28:16[22m [34m[200][39m /case-study [2m143ms[22m
+[1] [2m23:28:20[22m [34m[watch][39m /src/styles/main.css
+[1] [2m23:28:21[22m [34m[200][39m /case-study [2m67ms[22m
+[1] [2m23:28:22[22m [34m[200][39m /blog [2m145ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 23:28:22.794: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/blog/featured-cover.png?origWidth=1200&origHeight=675&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m23:28:22[22m [34m[200][39m /_image [2m22ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 23:28:22.833: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 23:28:22.833: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 23:28:22.848: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/blog/post-1.png?origWidth=1600&origHeight=900&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m23:28:22[22m [34m[200][39m /_image [2m34ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 23:28:22.866: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/blog/author-2.png?origWidth=48&origHeight=48&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m23:28:22[22m [34m[200][39m /_image [2m46ms[22m
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/blog/author-1.png?origWidth=48&origHeight=48&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m23:28:22[22m [34m[200][39m /_image [2m46ms[22m
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/blog/post-2.png?origWidth=1024&origHeight=768&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m23:28:22[22m [34m[200][39m /_image [2m81ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 23:28:22.932: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/blog/author-3.png?origWidth=48&origHeight=48&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m23:28:22[22m [34m[200][39m /_image [2m99ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 23:28:23.025: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/blog/post-3.png?origWidth=600&origHeight=300&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m23:28:23[22m [34m[200][39m /_image [2m56ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 23:28:23.044: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 23:28:23.045: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 23:28:23.046: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/blog/author-4.png?origWidth=48&origHeight=48&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m23:28:23[22m [34m[200][39m /_image [2m64ms[22m
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/blog/post-5.png?origWidth=800&origHeight=459&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m23:28:23[22m [34m[200][39m /_image [2m49ms[22m
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/blog/post-4.png?origWidth=1200&origHeight=630&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m23:28:23[22m [34m[200][39m /_image [2m83ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 23:28:23.099: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/blog/post-6.png?origWidth=800&origHeight=419&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m23:28:23[22m [34m[200][39m /_image [2m65ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 23:28:23.679: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/blog/author-5.png?origWidth=48&origHeight=48&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m23:28:23[22m [34m[200][39m /_image [2m12ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 23:28:23.679: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/blog/author-6.png?origWidth=48&origHeight=48&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m23:28:23[22m [34m[200][39m /_image [2m19ms[22m
+[1] 
+[1] (process:22028): GLib-GObject-CRITICAL **: 23:28:23.696: value "32" of type 'gint' is invalid or out of range for property 'space' of type 'VipsInterpretation'
+[1] ⚠️  Astro could not optimize image "/@fs/C:/Users/hp/Desktop/automark-astro-main/public/images/blog/author-7.png?origWidth=48&origHeight=48&origFormat=png". Sharp doesn't support this format. The image will be used unoptimized. Consider converting to WebP or placing in the public/ folder.
+[1] [2m23:28:23[22m [34m[200][39m /_image [2m21ms[22m
+[1] [2m23:28:27[22m [34m[watch][39m /src/styles/main.css
+[1] [2m23:28:28[22m [34m[200][39m /blog [2m33ms[22m
+[1] [2m23:28:32[22m [34m[200][39m /features [2m148ms[22m
+[1] [2m23:28:36[22m [34m[vite][39m program reload
+[1] [31m[1m23:28:36[22m [ERROR] [glob-loader][39m Failed to reload -index.md: **homepage → -index** data does not match collection schema.
+[1] 
+[1]   **pricing**: **pricing**: Required
+[1] 
+[1] [31m[1m23:28:36[22m [ERROR] [glob-loader][39m Failed to reload -index.md: **homepage → -index** data does not match collection schema.
+[1] 
+[1]   **pricing**: **pricing**: Required
+[1] 
+[1] [2m23:28:37[22m [34m[vite][39m program reload
+[1] [2m23:28:38[22m [34m[watch][39m /src/styles/main.css
+[1] [2m23:28:39[22m [34m[content][39m Syncing content
+[1] [2m23:28:39[22m [34m[content][39m Content config changed
+[1] [2m23:28:39[22m [34m[content][39m Clearing content store
+[1] [2m23:28:39[22m [34m[content][39m Synced content
+[1] [2m23:28:40[22m [34m[200][39m /features [2m467ms[22m
+[1] [2m23:28:44[22m [34m[200][39m /features [2m127ms[22m
+[1] [2m23:28:44[22m [34m[watch][39m /src/styles/main.css
+[1] [2m23:28:46[22m [34m[200][39m / [2m131ms[22m
+[1] [2m23:28:47[22m [34m[vite][39m program reload
+[1] [2m23:28:47[22m [34m[glob-loader][39m Reloaded data from [32m-index.md[39m
+[1] [31m[1m23:28:48[22m [ERROR] [vite][39m An error happened during full reload
+[1] Failed to load url file:///C:/Users/hp/Desktop/automark-astro-main/src/pages/pricing.astro (resolved id: C:/Users/hp/Desktop/automark-astro-main/src/pages/pricing.astro) in  virtual:astro:page:src/pages/pricing@_@astro. Does the file exist?
+[1] Error: Failed to load url file:///C:/Users/hp/Desktop/automark-astro-main/src/pages/pricing.astro (resolved id: C:/Users/hp/Desktop/automark-astro-main/src/pages/pricing.astro) in  virtual:astro:page:src/pages/pricing@_@astro. Does the file exist?
+[1]     at loadAndTransform (file:///C:/Users/hp/Desktop/automark-astro-main/node_modules/.pnpm/vite@8.1.0_@types+node@26.0_72f7b2b51f60e92971999382feb51a5e/node_modules/vite/dist/node/chunks/node.js:19714:31)
+[1]     at async fetchModule (file:///C:/Users/hp/Desktop/automark-astro-main/node_modules/.pnpm/vite@8.1.0_@types+node@26.0_72f7b2b51f60e92971999382feb51a5e/node_modules/vite/dist/node/chunks/node.js:33098:15)
+[1]     at async handleInvoke (file:///C:/Users/hp/Desktop/automark-astro-main/node_modules/.pnpm/vite@8.1.0_@types+node@26.0_72f7b2b51f60e92971999382feb51a5e/node_modules/vite/dist/node/chunks/node.js:25811:21)
+[1]     at async EventEmitter.listenerForInvokeHandler (file:///C:/Users/hp/Desktop/automark-astro-main/node_modules/.pnpm/vite@8.1.0_@types+node@26.0_72f7b2b51f60e92971999382feb51a5e/node_modules/vite/dist/node/chunks/node.js:25866:13)
+[1] [2m23:28:48[22m [34m[200][39m / [2m223ms[22m
+[1] [2m23:29:03[22m [34m[200][39m / [2m604ms[22m
+[1] [33m[1m23:29:04[22m [WARN] [router][39m A `getStaticPaths()` route pattern was matched, but no matching static path was found for requested path `/pricing`.
+[1] 
+[1] Possible dynamic routes being matched: src/pages/[regular].astro.
+[1] [2m23:29:05[22m [33m[404][39m /pricing [2m241ms[22m
+[1] [33m[1m23:29:12[22m [WARN] [router][39m A `getStaticPaths()` route pattern was matched, but no matching static path was found for requested path `/pricing`.
+[1] 
+[1] Possible dynamic routes being matched: src/pages/[regular].astro.
+[1] [2m23:29:12[22m [33m[404][39m /pricing [2m19ms[22m
+[1] [33m[1m23:29:27[22m [WARN] [router][39m A `getStaticPaths()` route pattern was matched, but no matching static path was found for requested path `/pricing`.
+[1] 
+[1] Possible dynamic routes being matched: src/pages/[regular].astro.
+[1] [2m23:29:27[22m [33m[404][39m /pricing [2m22ms[22m
+[1] [2m23:29:27[22m [34m[200][39m / [2m42ms[22m
+[1] [2m23:30:17[22m [34m[200][39m / [2m28ms[22m
+[1] [2m23:31:11[22m [34m[watch][39m /src/styles/main.css
+[1] [2m23:31:13[22m [34m[200][39m / [2m352ms[22m
+[1] [2m23:31:21[22m [34m[200][39m / [2m33ms[22m
+[1] [2m23:31:32[22m [34m[200][39m / [2m29ms[22m
+[1] [2m23:31:45[22m [34m[watch][39m /src/styles/main.css
+[1] [2m23:31:46[22m [34m[200][39m / [2m314ms[22m
+[1] [2m23:31:54[22m [34m[200][39m / [2m32ms[22m
+[1] [2m23:40:18[22m [34m[200][39m /contact [2m118ms[22m
+[1] [2m23:40:30[22m [34m[200][39m /contact [2m15ms[22m
+[1] [2m23:40:37[22m [34m[200][39m /contact [2m21ms[22m
+[1] [2m23:40:41[22m [34m[200][39m / [2m26ms[22m
+[1] [2m23:40:42[22m [34m[200][39m /contact [2m25ms[22m
+[1] [2m23:40:45[22m [34m[200][39m /contact [2m31ms[22m
+[1] [2m23:40:46[22m [34m[200][39m / [2m35ms[22m
+[1] [2m23:40:47[22m [34m[200][39m /contact [2m35ms[22m
+[1] [2m23:40:53[22m [34m[200][39m / [2m20ms[22m
+[1] [2m23:45:07[22m [34m[watch][39m /src/styles/main.css
+[1] [2m23:45:08[22m [34m[200][39m / [2m93ms[22m
+[1] [2m23:46:28[22m [34m[watch][39m /src/styles/main.css
+[1] [2m23:46:29[22m [34m[200][39m / [2m116ms[22m
+[1] [2m23:46:36[22m [34m[200][39m / [2m9ms[22m
+[1] [2m23:46:42[22m [34m[200][39m / [2m17ms[22m
+[1] [2m23:46:45[22m [34m[200][39m / [2m12ms[22m
+[1] [2m04:27:25[22m [34m[200][39m / [2m172ms[22m
+[0] ✅ Theme CSS generated successfully at: C:\Users\hp\Desktop\automark-astro-main\src\styles\generated-theme.css
+[1] [2m07:01:40[22m [34m[vite][39m program reload
+[1] [2m07:01:58[22m [34m[200][39m / [2m1785ms[22m
+[1] [2m07:07:44[22m [34m[watch][39m public/demo/index.html
+[1] [2m07:08:01[22m Configuration file updated. Restarting...
+[1] [2m07:08:01[22m [34m[vite][39m program reload
+[1] [2m07:08:11[22m [34m[vite][39m program reload
+[1] [2m07:08:15[22m [34m[200][39m / [2m5265ms[22m
+[1] [2m07:08:27[22m [34m[vite][39m connected.
+[1] [2m07:08:34[22m [34m[watch][39m /src/styles/main.css
+[1] [2m07:08:34[22m [34m[watch][39m /src/styles/main.css
+[1] [2m07:08:38[22m [34m[glob-loader][39m Reloaded data from [32m-index.md[39m
+[1] [2m07:08:38[22m [34m[glob-loader][39m Reloaded data from [32mcall-to-action.md[39m
+[1] [2m07:08:38[22m [34m[glob-loader][39m Reloaded data from [32m-index.md[39m
+[1] [2m07:08:39[22m [34m[glob-loader][39m Reloaded data from [32mcall-to-action.md[39m
+[1] [2m07:08:43[22m [34m[vite][39m program reload
+[1] [2m07:08:45[22m [34m[glob-loader][39m Reloaded data from [32mour-story.md[39m
+[1] [2m07:08:46[22m [34m[vite][39m program reload
+[1] [2m07:08:49[22m [34m[vite][39m connected.
+[1] [2m07:08:56[22m [34m[vite][39m program reload
+[1] [2m07:08:58[22m [34m[vite][39m program reload
+[1] [2m07:09:00[22m [34m[vite][39m program reload
+[1] [2m07:09:03[22m [34m[200][39m / [2m17718ms[22m
+[1] [2m07:09:03[22m [34m[200][39m / [2m17718ms[22m
+[1] [2m07:09:03[22m [34m[200][39m / [2m7636ms[22m
+[1] [2m07:10:01[22m [34m[vite][39m Re-optimizing dependencies because vite config has changed
+[1] [2m07:10:02[22m [34m[vite][39m server restarted.
+[1] [2m07:10:02[22m [34m[vite][39m [optimizer] scanning dependencies...
+[1] [2m07:10:08[22m [34m[vite][39m [optimizer] bundling dependencies...
+[1] [2m07:11:15[22m [34m[200][39m / [2m22510ms[22m
+[1] [2m07:11:16[22m [34m[200][39m / [2m80ms[22m
+[1] [2m07:17:37[22m Configuration file updated. Restarting...
+[1] [2m07:17:37[22m [34m[vite][39m program reload
+[1] [31m[1m07:17:38[22m [ERROR] [vite][39m An error happened during full reload
+[1] Failed to load url astro:server-app.js (resolved id: astro:server-app.js). Does the file exist?
+[1] Error: Failed to load url astro:server-app.js (resolved id: astro:server-app.js). Does the file exist?
+[1]     at loadAndTransform (file:///C:/Users/hp/Desktop/automark-astro-main/node_modules/.pnpm/vite@8.1.0_@types+node@26.0_72f7b2b51f60e92971999382feb51a5e/node_modules/vite/dist/node/chunks/node.js:19714:31)
+[1] [2m07:17:41[22m [34m[200][39m / [2m496ms[22m
+[1] [33m[1m07:17:42[22m [WARN] [router][39m The route "/demo" is defined in both "/demo" and "/demo/". A static route cannot be defined more than once.
+[1] [33m[1m07:17:42[22m [WARN] [router][39m A collision will result in a hard error in following versions of Astro.
+[1] [2m07:17:45[22m [34m[vite][39m connected.
+[1] [2m07:18:09[22m [34m[vite][39m connected.
+[1] [2m07:18:09[22m [34m[vite][39m server restarted.
+[1] [2m07:18:37[22m [34m[200][39m / [2m20578ms[22m
+[1] [2m07:18:37[22m [34m[200][39m / [2m20580ms[22m
+[1] [2m07:18:37[22m [34m[200][39m / [2m4379ms[22m
+[1] [2m07:18:42[22m [34m[200][39m / [2m286ms[22m
+[1] [2m07:19:13[22m [34m[200][39m / [2m30ms[22m
+[1] [2m07:19:14[22m [34m[200][39m / [2m34ms[22m
+[1] [2m07:19:59[22m [33m[301][39m /demo [2m1ms[22m
+[1] [2m07:27:33[22m [34m[watch][39m /src/styles/main.css
+[1] [33m[1m07:27:33[22m [WARN] [router][39m The route "/demo" is defined in both "/demo" and "/demo/". A static route cannot be defined more than once.
+[1] [33m[1m07:27:33[22m [WARN] [router][39m A collision will result in a hard error in following versions of Astro.
+[1] [2m07:27:34[22m [34m[vite][39m program reload
+[1] [33m[1m07:27:34[22m [WARN] [router][39m The route "/demo" is defined in both "/demo" and "/demo/". A static route cannot be defined more than once.
+[1] [33m[1m07:27:34[22m [WARN] [router][39m A collision will result in a hard error in following versions of Astro.
+[1] [31m[1m07:27:34[22m [ERROR] [vite][39m An error happened during full reload
+[1] Failed to load url astro:server-app.js (resolved id: astro:server-app.js). Does the file exist?
+[1] Error: Failed to load url astro:server-app.js (resolved id: astro:server-app.js). Does the file exist?
+[1]     at loadAndTransform (file:///C:/Users/hp/Desktop/automark-astro-main/node_modules/.pnpm/vite@8.1.0_@types+node@26.0_72f7b2b51f60e92971999382feb51a5e/node_modules/vite/dist/node/chunks/node.js:19714:31)
+[1] [33m[1m07:27:34[22m [WARN] [router][39m The route "/demo" is defined in both "/demo" and "/demo/". A static route cannot be defined more than once.
+[1] [33m[1m07:27:34[22m [WARN] [router][39m A collision will result in a hard error in following versions of Astro.
+[1] [2m07:27:35[22m [34m[vite][39m program reload
+[1] [33m[1m07:27:35[22m [WARN] [router][39m The route "/demo" is defined in both "/demo" and "/demo/". A static route cannot be defined more than once.
+[1] [33m[1m07:27:35[22m [WARN] [router][39m A collision will result in a hard error in following versions of Astro.
+[1] [2m07:27:36[22m [34m[vite][39m program reload
+[1] [2m07:27:37[22m [34m[200][39m / [2m2437ms[22m
+[1] [2m07:28:18[22m [34m[200][39m / [2m119ms[22m
+[1] [2m07:28:19[22m [33m[301][39m /demo [2m0ms[22m
+[1] [2m07:28:35[22m [34m[200][39m / [2m12ms[22m
+[1] [2m07:32:50[22m [34m[200][39m / [2m22ms[22m
+[1] astro dev exited with code 1
+[0] ✅ Theme CSS generated successfully at: C:\Users\hp\Desktop\automark-astro-main\src\styles\generated-theme.css

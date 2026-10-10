@@ -1,0 +1,37 @@
+---
+import ImageMod from "@/layouts/components/ImageMod.astro";
+
+interface Props {
+  poster: string;
+  content?: string;
+  name?: string;
+  designation?: string;
+  video?: string;
+}
+const { poster, content, name, designation } = Astro.props;
+---
+
+<div>
+  <div
+    class="relative w-full max-w-280 mx-auto rounded-[30px] corner-squircle overflow-hidden"
+  >
+    <ImageMod
+      src={poster}
+      alt={name ? `${name} testimonial` : "Testimonial"}
+      width={1000}
+      height={563}
+      fit="cover"
+      class="w-full aspect-video object-cover"
+    />
+  </div>
+  <div class="p-7 rounded-[30px] mt-2.5 corner-squircle bg-light/60">
+    <p class="text-text-light text-h6 text-center">
+      {content}
+    </p>
+    <hr class="opacity-20 my-10" />
+    <div class="text-center">
+      <p class="text-text-light font-semibold">{name}</p>
+      <p class="text-text-dark/60 text-sm">{designation}</p>
+    </div>
+  </div>
+</div>

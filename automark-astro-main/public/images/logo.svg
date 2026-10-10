@@ -1,0 +1,13 @@
+<svg width="220" height="50" viewBox="0 0 220 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="50" height="50" rx="14" fill="url(#forensiq-mark)"/>
+  <circle cx="22" cy="21.5" r="8.25" stroke="white" stroke-width="3" fill="none"/>
+  <path d="M28.2 27.7L36 35.5" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  <path d="M16.5 41H33.5" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.65"/>
+  <text x="64" y="35" font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="29" font-weight="700" fill="#FFFFFF" letter-spacing="-0.5">Forens<tspan fill="#937AFF">IQ</tspan></text>
+  <defs>
+    <linearGradient id="forensiq-mark" x1="0" y1="0" x2="50" y2="50" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#937AFF"/>
+      <stop offset="1" stop-color="#4D36D0"/>
+    </linearGradient>
+  </defs>
+</svg>
