@@ -1,115 +1,286 @@
-#  [ AI-Powered Digital Forensics Platform for Automated Evidence Analysis, Cyber Threat Detection, Incident Investigation, and Actionable Intelligence Generation]
+# AI-Powered Digital Forensics Platform for Automated Evidence Analysis, Cyber Threat Detection, Incident Investigation, and Actionable Intelligence Generation
 
 **OPCODE IMPACT 2026 | Hackathon Submission**
 
-**Team ID:** [OPC017]
+**Team ID:** OPC017
 
 ## 1. Problem Statement
 
-Digital crimes such as online fraud, phishing, identity theft, cyberbullying, ransomware, and unauthorized access are increasing rapidly. These incidents often leave important digital evidence across smartphones, computers, emails, social media, web browsers, cloud platforms, and storage devices. However, investigators face difficulties in collecting and analyzing this large volume of data within a limited time. Evidence may be deleted, hidden, modified, or scattered across multiple devices, making manual investigation slow and error-prone. Identifying suspicious files, messages, URLs, login activities, and communication patterns also requires significant technical expertise.
+Digital crimes such as online fraud, phishing, identity theft, cyberbullying, ransomware, and unauthorized access are increasing rapidly. These incidents often leave important digital evidence across computers, emails, web browsers, and storage devices. However, investigators face difficulties collecting and analyzing large volumes of data within a limited time.
+
+Evidence may be deleted, hidden, modified, or scattered across multiple sources, making manual investigation slow and error-prone. Identifying suspicious files, messages, URLs, login activities, and communication patterns also requires significant technical expertise.
 
 ## 2. Solution Title
 
-**OPC017 —  AI-Powered Digital Forensics Platform for Automated Evidence Analysis, Cyber Threat Detection, Incident Investigation, and Actionable Intelligence Generation **
+**OPC017 — AI-Powered Digital Forensics Platform for Automated Evidence Analysis, Cyber Threat Detection, Incident Investigation, and Actionable Intelligence Generation**
 
 ## 3. Solution Description
 
-Our proposed solution aims to develop an Al-assisted Digital Forensics and Cyber Intelligence Platform that helps investigators analyze digital evidence efficiently. The system will allow authorized users to upload forensic evidence and automatically extract relevant information such as files, metadata, timestamps, URLs, email addresses, IP addresses, and suspicious activities. It will identify potential threats and unusual patterns, organize important evidence, and provide a risk assessment with explanations. The platform will also maintain evidence integrity and a basic chain-of-custody record while generating a structured forensic investigation report. This can reduce investigation time, assist cybersecurity teams in prioritizing important evidence, and make preliminary digital forensic analysis mo accessible and efficient.
+OPC017 is an AI-assisted digital forensics and cyber intelligence platform designed to help investigators analyze digital evidence efficiently. Authorized users can upload forensic evidence and extract relevant information such as timestamps, URLs, email addresses, IP addresses, and suspicious activities.
+
+The platform applies deterministic detection rules, correlates related artifacts, organizes findings, and provides investigation assistance through an AI-powered explanation service. It also calculates SHA-256 hashes to verify evidence integrity and maintains a record of evidence and related investigation data.
+
+The goal is to reduce preliminary investigation time, help cybersecurity teams prioritize relevant evidence, and make digital forensic analysis more accessible and efficient.
 
 ## 4. Architecture Diagram
 
 ![Architecture Diagram](docs/architecture.png)
 
-**Workflow:** evidence upload → format validation → SHA-256 hashing and original preservation
-→ format-aware artifact extraction → deterministic detection rules → cross-source correlation
-(shared indicators + time-window proximity) → case-scoped storage (SQLite) → investigation
-dashboard (artifact explorer, relationship graph, timeline, AI explainer, tamper-evident vault).
+**Workflow:**
 
-The platform is split into two read-only-toward-each-other stacks: a **Node workspace** (the
-interactive UI + REST API, served at `http://localhost:4000/`) and a **Python/FastAPI service**
-(the `app/` library and Swagger API). They do not share a database.
+Evidence upload → format validation → SHA-256 hashing and original preservation → format-aware artifact extraction → deterministic detection rules → cross-source correlation → database storage → investigation dashboard and AI-assisted explanations.
+
+The platform consists of two backend services:
+
+- **Node.js + Express:** Serves the dashboard and REST API on port `4000`. It handles case management, authentication, evidence management, analysis features, and the dashboard's API requests.
+- **Python + FastAPI:** Runs the investigation and evidence-analysis service on port `8000`. It provides evidence-related operations, artifact analysis, and AI-assisted explanations.
+
+The services use separate SQLite databases. The Node.js service stores its database under `backend/data/forensics.db`, while the Python service uses the repository-root `evidence.db`. The Python service stores uploaded originals under `evidence/originals/`.
+
+The dashboard forwards AI investigation requests to the Python service. Both services must be running for the complete application to work.
 
 ## 5. Technology Stack
 
-- **Frontend:** Single-page HTML/CSS/JavaScript (no build step), served by the backend
-- **Backend:** Node.js 24 + Express (REST API + static UI); Python + FastAPI service (`app/`)
-- **Database:** SQLite — Node's built-in `node:sqlite` (`backend/data/forensics.db`); Python uses the repository-root `evidence.db`
-- **Other Technologies:** SHA-256 (evidence integrity + hash-linked audit log), JWT + bcrypt (auth),
-  Helmet/CORS, multer, zod; Python side uses `re`/`csv`/`json` parsers, pytest
+- **Frontend:** HTML, CSS, and JavaScript.
+- **Backend:** Node.js 22 or newer with Express; Python with FastAPI and Uvicorn.
+- **Database:** SQLite using Node.js's built-in `node:sqlite` module and Python's `sqlite3`.
+- **Evidence Integrity:** SHA-256 hashing and hash verification.
+- **Authentication and Security:** JWT, bcrypt, Helmet, CORS, and request validation.
+- **Analysis:** Python-based artifact extraction, deterministic detection rules, correlation, and AI-assisted investigation.
+- **Testing:** Node.js verification tests and Python tests using pytest.
+- **Version Control:** Git and GitHub.
 
 ## 6. Quick Start Guide
 
-**Prerequisites:**
-- Node.js 22 or newer (Node 24 recommended; `node:sqlite` is built in)
-- Windows PowerShell 5.1 (or any shell), Git
-- Optional: Python 3.10+ for the FastAPI service
+### 6.1 Prerequisites
 
-**Installation & Execution (Node workspace — dashboard + API):**
+Install the following before setting up OPC017 from scratch:
+
+| Dependency | Requirement | Purpose |
+|---|---|---|
+| Git | Current version | Clone the repository |
+| Node.js | 22 or newer; 24 recommended | Run the Node.js backend |
+| npm | Included with Node.js | Install JavaScript dependencies |
+| Python | A version compatible with `requirements.txt`; Python 3.12+ is recommended | Run the investigation API |
+| pip | Included with Python | Install Python dependencies |
+| Internet connection | Required during initial installation and for the configured online AI provider | Download dependencies and access the AI service |
+
+No separate SQLite installation is required for the Node.js database because Node.js provides `node:sqlite`. Python uses its standard-library `sqlite3` module.
+
+### 6.2 Clone the Repository
+
+Open a terminal and run:
+
+```bash
+git clone <YOUR_GITHUB_REPOSITORY_URL>
+cd OPC017
+```
+
+Replace `<YOUR_GITHUB_REPOSITORY_URL>` with the actual GitHub repository URL.
+
+### 6.3 Install Node.js Dependencies
+
+From the repository root:
 
 ```bash
 cd backend
 npm install
-
-# Build the 4 synthetic demo cases (creates data/forensics.test.db)
-node src/seed.js
-
-# Optional: verify fixtures, hashes, audit chain, and case isolation
-node tests/verify.js        # expect: ALL CHECKS PASSED
-
-# Start the app (serves the dashboard + API)
-node src/server.js
 ```
 
-Then open **http://localhost:4000/** and pick a case in the **Active case** dropdown.
-On Windows you can also just double-click `start.bat` from the repo root.
+Return to the project root:
 
-**Optional (Python FastAPI service):**
+```bash
+cd ..
+```
+
+If you want to generate the synthetic demonstration cases, run:
+
+```bash
+cd backend
+node src/seed.js
+cd ..
+```
+
+Run the Node.js verification tests:
+
+```bash
+cd backend
+node tests/verify.js
+cd ..
+```
+
+The verification tests should report `ALL CHECKS PASSED` when all checks succeed.
+
+### 6.4 Install Python Dependencies
+
+**Linux (Arch Linux and other Linux distributions):**
 
 ```bash
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m pytest -v          # run the test suite
-.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload   # Swagger UI at /docs
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
+
+**Windows PowerShell:**
+
+```powershell
+py -3 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+**Windows Command Prompt:**
+
+```bat
+py -3 -m venv .venv
+.venv\Scripts\python.exe -m pip install --upgrade pip
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+Create the virtual environment separately on each computer and operating system. Do not copy a Linux `.venv` directory to Windows or vice versa.
+
+### 6.5 Configure Environment Variables and AI Access
+
+Create the required local environment configuration using the variables expected by the project. Check `app/llm.py` and any configuration-loading code to identify the exact AI provider settings.
+
+If the configured AI provider requires an API key, obtain your own key and place it in the appropriate local `.env` file.
+
+- Never commit `.env` files or API keys to Git.
+- Do not share your personal API key with teammates.
+- Each teammate should configure their own credentials where required.
+- The AI feature requires a working provider configuration and internet access when using an online provider.
+
+### 6.6 Run the Application
+
+Both services must be running for the full dashboard and AI investigation functionality.
+
+**Option A — Linux**
+
+From the repository root:
+
+```bash
+chmod +x start.sh
+./start.sh
+```
+
+The launcher starts the Python investigation service and Node.js backend. Open:
+
+- Dashboard: `http://127.0.0.1:4000/`
+- Node.js health check: `http://127.0.0.1:4000/api/health`
+- Python API documentation: `http://127.0.0.1:8000/docs`
+
+Press `Ctrl+C` to stop the services.
+
+**Option B — Windows PowerShell**
+
+From the repository root:
+
+```powershell
+.\start.ps1
+```
+
+If PowerShell blocks script execution, review your local execution policy rather than changing system-wide security settings unnecessarily.
+
+**Option C — Windows Command Prompt**
+
+From the repository root, run:
+
+```bat
+start.bat
+```
+
+The Windows launcher must start **both** the Python API and the Node.js backend. If it only starts Node.js, update `start.bat` to launch Uvicorn as well.
+
+**Option D — Manual startup for troubleshooting**
+
+Start the Python service in one terminal from the repository root:
+
+```bash
+# Linux
+.venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+On Windows, use:
+
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+Then start the Node.js service in a second terminal:
+
+```bash
+cd backend
+npm run dev
+```
+
+Open `http://127.0.0.1:4000/` in your browser.
+
+### 6.7 Troubleshooting
+
+**Error: Could not reach the Python investigation service**
+
+1. Confirm the Python service is running.
+2. Open `http://127.0.0.1:8000/` and check that it responds.
+3. Check the Python terminal for missing packages, configuration errors, or port conflicts.
+4. Verify that the Node.js backend's `PYTHON_API_URL` points to the correct Python service address.
+5. If both services are running on the same computer, `http://127.0.0.1:8000` is the expected default.
+
+**Error: Python or Node.js dependencies are missing**
+
+Repeat the appropriate installation steps in Sections 6.3 and 6.4.
+
+**Error: AI requests fail but the dashboard loads**
+
+Check the AI provider configuration, API key, network connectivity, provider quota, and Python service logs.
+
+**Important:** SQLite databases and uploaded evidence are local to the computer. They are not automatically synchronized between teammates. Keep important test evidence backed up and never use real sensitive evidence in an unsecured demonstration environment.
 
 ## 7. Output Screenshots
 
 ![Output Screenshot](docs/output.png)
 
-The dashboard shows live, case-scoped counts of evidence, artifacts, findings, correlations and
-timeline events (never hardcoded). Selecting a finding returns an evidence-grounded explanation
-that cites evidence IDs. The **Correlation** tab lists extracted artifacts with their source
-line/row and shows relationships only when supported by an implemented rule; the **Timeline**
-view is UTC-sorted and clicking an event traces it back to its file, line, and parser; the
-**Vault** tab re-verifies SHA-256 hashes on demand.
+The dashboard displays case-scoped evidence, artifacts, findings, correlations, and timeline events. Selecting a finding provides an explanation based on the available investigation records.
 
-Demo cases (all synthetic and inert): `CASE-2026-PHISH01` (online banking phishing),
-`CASE-2026-FRAUD02` (vendor invoice / BEC fraud), `CASE-2026-TROJAN03` (trojanized installer),
-`CASE-2026-RANSOM04` (ransomware precursor).
+The Correlation view displays extracted artifacts and relationships supported by implemented rules. The Timeline view organizes supported events chronologically and links them to their sources. The Vault view allows evidence hashes to be re-verified.
+
+**Synthetic demonstration cases:**
+
+- `CASE-2026-PHISH01` — Online banking phishing
+- `CASE-2026-FRAUD02` — Vendor invoice and business email compromise fraud
+- `CASE-2026-TROJAN03` — Trojanized installer
+- `CASE-2026-RANSOM04` — Ransomware precursor activity
+
+These cases use synthetic demonstration data and are intended for testing and presentation.
 
 ## 8. Future Scope
 
-- Shared-indicator correlation for additional entity types (certificates, wallet addresses, phone numbers)
-- Automated timeline export and PDF forensic reporting with integrity annexes
-- Multiple-case comparison and investigation prioritization
-- Optional, opt-in LLM explanations strictly grounded in stored records (never inventing evidence)
-- Support for forensic disk images and mobile/cloud artifacts via documented import formats
+- Correlation of additional entity types, including certificates, cryptocurrency wallet addresses, and phone numbers.
+- Automated timeline export and PDF forensic reporting with integrity information.
+- Multiple-case comparison and investigation prioritization.
+- More rigorous validation of AI-generated explanations against stored evidence.
+- Support for forensic disk images and mobile/cloud artifacts through documented import formats.
+- Persistent shared database and object storage for multi-user deployment.
+- Improved deployment automation and monitoring for distributed services.
 
 ## 9. Team Contributions
 
 | Member Name | Contribution |
-|-------------|--------------|
-| [Name 1] | [Work completed] |
-| [Name 2] | [Work completed] |
-| [Name 3] | [Work completed] |
+|---|---|
+| Josbin Joshy | Dashboard development, UI integration, and visualization of forensic findings |
+|Bernie Alfred ||Node.js REST API, case management, database operations, and authentication |
+|Basil Babu |Python artifact extraction, threat detection, correlation, and evidence integrity verification |
+|Harris Seby||AI-assisted investigation, answer validation, service integration, and testing|
 
 ## 10. Tools Used
 
 | Tool / Platform | Purpose / Why Used |
-|-----------------|--------------------|
-| Node.js 24 + Express | Backend REST API and static UI host |
-| SQLite (`node:sqlite`) | Zero-dependency, local, case-scoped evidence store |
-| Python + FastAPI | Secondary service and Swagger-documented API |
-| Git / GitHub | Version control and collaboration |
-| VS Code | Code editing and debugging |
-| [AI Tool, if used] | [How and why AI was used] |
+|---|---|
+| Node.js 22+ and Express | Backend REST API and dashboard hosting |
+| SQLite (`node:sqlite`) | Local case-scoped database for the Node.js service |
+| Python and FastAPI | Evidence analysis and investigation API |
+| Uvicorn | Python ASGI server |
+| SHA-256 | Evidence integrity verification |
+| Git and GitHub | Version control and team collaboration |
+| VS Code or another editor | Code editing and debugging |
+| [AI Provider / Tool] | AI-assisted investigation explanations, where configured |
