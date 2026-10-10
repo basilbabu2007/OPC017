@@ -1,15 +1,61 @@
+```bat
 @echo off
-REM OPC017 one-click launcher: starts the backend (which serves the UI) and opens it.
-cd /d "%~dp0backend"
-if not exist data\forensics.test.db (
-  echo Seeding demo databases first...
-  cmd /c "C:\Progra~1\nodejs\node.exe src/seed.js"
-)
-start "OPC017 backend" "C:\Program Files\nodejs\node.exe" src/server.js
-echo Waiting for server...
-timeout /t 5 /nobreak >nul
-start http://localhost:4000/
+setlocal
+
+set "ROOT=%~dp0"
+set "BACKEND=%ROOT%backend"
+set "PYTHON=%ROOT%.venv\Scripts\python.exe"
+
+echo ========================================
+echo       OPC017 Forensics Platform
+echo ========================================
 echo.
-echo OPC017 is running at http://localhost:4000/
-echo Close the "OPC017 backend" window to stop the server.
-pause
+
+if not exist "%PYTHON%" (
+    echo ERROR: Python virtual environment not found.
+    echo Expected: "%PYTHON%"
+    echo.
+    echo Create a Windows venv and install requirements.txt.
+    pause
+    exit /b 1
+)
+
+where node >nul 2>&1
+if errorlevel 1 (
+    echo ERROR: Node.js is not installed or not on PATH.
+    pause
+    exit /b 1
+)
+
+where npm >nul 2>&1
+if errorlevel 1 (
+    echo ERROR: npm is not installed or not on PATH.
+    pause
+    exit /b 1
+)
+
+if not exist "%BACKEND%\node_modules" (
+    echo ERROR: Node dependencies are missing.
+    echo Run: cd backend ^&^& npm install
+    pause
+    exit /b 1
+)
+
+echo Starting Python investigation API...
+start "OPC017 Python API" /D "%ROOT%" cmd /k ""%PYTHON%" -m uvicorn app.main:app --host 127.0.0.1 --port 8000"
+
+echo Starting Node.js backend...
+start "OPC017 Node Backend" /D "%BACKEND%" cmd /k "npm run dev"
+
+echo.
+echo Waiting for services to start...
+timeout /t 5 /nobreak >nul
+
+echo Dashboard:  http://127.0.0.1:4000
+echo Python API: http://127.0.0.1:8000/docs
+echo.
+echo If AI does not work, check both service windows.
+start "" "http://127.0.0.1:4000"
+
+endlocal
+```
